@@ -68,9 +68,9 @@ void OpenGLExample::onInitialize()
 
     m_vertices = new globjects::Buffer;
     m_vertices->setData(std::vector<float>{
-        -0.8, -0.8,
-        0.8, -0.8,
-        0.8, 0.8
+        -0.8f, -0.8f,
+        0.8f, -0.8f,
+        0.8f, 0.8f
     }, gl::GL_STATIC_DRAW);
 
     m_vao = new globjects::VertexArray;
