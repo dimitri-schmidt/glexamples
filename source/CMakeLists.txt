@@ -24,6 +24,7 @@ include_directories(
     ${LIBZEUG_INCLUDES}
 )
 
+# Define common libraries for all examples
 set(GLEXAMPLES_DEPENDENCY_LIBRARIES
     ${GLBINDING_LIBRARIES}
     ${GLOBJECTS_LIBRARIES}
@@ -34,6 +35,7 @@ set(GLEXAMPLES_DEPENDENCY_LIBRARIES
 # Applications
 set(IDE_FOLDER "")
 add_subdirectory(emptyexample)
+add_subdirectory(openglexample)
 add_subdirectory(transparency)
 add_subdirectory(glexamples-viewer)
 

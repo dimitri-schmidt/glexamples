@@ -1,6 +1,6 @@
 
 # Target
-set(target emptyexample-painters)
+set(target openglexample-painters)
 message(STATUS "Example ${target}")
 
 
@@ -36,12 +36,12 @@ set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 set(sources
-    ${source_path}/EmptyExample.cpp
+    ${source_path}/OpenGLExample.cpp
     ${source_path}/plugin.cpp
 )
 
 set(api_includes
-    ${include_path}/EmptyExample.h
+    ${include_path}/OpenGLExample.h
 )
 
 # Group source files
