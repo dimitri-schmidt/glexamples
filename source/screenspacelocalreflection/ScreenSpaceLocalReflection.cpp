@@ -75,13 +75,22 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_vertices = new Buffer;
 	m_vertices->setData(std::vector < float > {
 		-0.4f, -0.4f, -0.4f,
-		0.4f, -0.4f, -0.4f,
-		0.4f, 0.4f, -0.4f,
-		-0.4f, 0.4f, -0.4f,
-		-0.4f, -0.4f, 0.4f,
-		0.4f, -0.4f, 0.4f,
-		0.4f, 0.4f, 0.4f,
-		-0.4f, 0.4f, 0.4f
+         0.4f, -0.4f, -0.4f,
+         0.4f,  0.4f, -0.4f,
+        -0.4f,  0.4f, -0.4f,
+        -0.4f, -0.4f,  0.4f,
+         0.4f, -0.4f,  0.4f,
+         0.4f,  0.4f,  0.4f,
+        -0.4f,  0.4f,  0.4f,
+
+        -1.2f, -0.4f, -0.4f,
+        -2.0f, -0.4f, -0.4f,
+        -2.0f,  0.4f, -0.4f,
+        -1.2f,  0.4f, -0.4f,
+        -1.2f, -0.4f,  0.4f,
+        -2.0f, -0.4f,  0.4f,
+        -2.0f,  0.4f,  0.4f,
+        -1.2f,  0.4f,  0.4f
 	}, gl::GL_STATIC_DRAW);
 
 	m_indices = new Buffer;
@@ -97,10 +106,23 @@ void ScreenSpaceLocalReflection::onInitialize()
 		5, 4, 0,
 		0, 1, 5,
 		3, 2, 6,
-		6, 7, 3
+        6, 7, 3,
+
+        8,  9, 10,
+       10, 11,  8,
+        9, 13, 14,
+       14, 10,  9,
+       13, 12, 15,
+       15, 14, 13,
+       12,  8, 11,
+       11, 15, 12,
+       13, 12,  8,
+        8,  9, 13,
+       11, 10, 14,
+       14, 15, 11
 	}, gl::GL_STATIC_DRAW);
 
-	m_size = 12 * 3 * sizeof(int);
+    m_size = 24 * 3 * sizeof(int);
 
 	m_vao = new VertexArray;
 	m_vao->bind();
