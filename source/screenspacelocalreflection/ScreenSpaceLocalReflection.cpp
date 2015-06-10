@@ -176,6 +176,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_transformLocation = m_program->getUniformLocation("transform");
     m_translateLocation = m_program->getUniformLocation("translate");
 	m_rotateLocation = m_program->getUniformLocation("rotate");
+    m_scaleLocation = m_program->getUniformLocation("scale");
 
 	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
@@ -217,12 +218,12 @@ void ScreenSpaceLocalReflection::onPaint()
 	m_program->use();
 	m_program->setUniform(m_transformLocation, transform);
 
-	auto scale = glm::mat4(0.4f, 0.0f, 0.0f, 0.0f,
-						   0.0f, 0.4f, 0.0f, 0.0f,
-						   0.0f, 0.0f, 0.4f, 0.0f,
+    auto scale = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
+                           0.0f, 0.5f, 0.0f, 0.0f,
+                           0.0f, 0.0f, 0.5f, 0.0f,
 						   0.0f, 0.0f, 0.0f, 1.0f);
 
-    auto rotate = glm::mat4(cos(-M_PI/4), 0.0f, -sin(-M_PI/4), -0.5f,
+    auto rotate = glm::mat4(cos(-M_PI/4), 0.0f, -sin(-M_PI/4),  0.0f,
 							0.0f,		  1.0f,  0.0f,		    0.0f,
                             sin(-M_PI/4), 0.0f,  cos(-M_PI/4),  0.0f,
                             0.0f,		  0.0f,  0.0f,		    1.0f);
@@ -232,15 +233,16 @@ void ScreenSpaceLocalReflection::onPaint()
 							   0.0f, 0.0f, 1.0f,  0.0f,
 						       0.0f, 0.0f, 0.0f,  1.0f);
 
-	m_program->setUniform(m_translateLocation, scale * rotate * translate);
-	m_program->setUniform(2, rotate);
+    m_program->setUniform(m_translateLocation, translate);
+    m_program->setUniform(m_rotateLocation, rotate);
+    m_program->setUniform(m_scaleLocation, scale);
 
 	m_vao->bind();	
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
 	m_vao->unbind();
 
 
-    rotate = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 0.5f,
+    rotate = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 0.0f,
                        0.0f,		1.0f,  0.0f,		0.0f,
                        sin(M_PI/4), 0.0f,  cos(M_PI/4), 0.0f,
                        0.0f,		0.0f,  0.0f,		1.0f);
@@ -250,8 +252,9 @@ void ScreenSpaceLocalReflection::onPaint()
 						  0.0f, 0.0f, 1.0f, 0.0f,
 						  0.0f, 0.0f, 0.0f, 1.0f);
 
-	m_program->setUniform(m_translateLocation, scale * rotate * translate);
+    m_program->setUniform(m_translateLocation, translate);
 	m_program->setUniform(m_rotateLocation, rotate);
+    m_program->setUniform(m_scaleLocation, scale);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
