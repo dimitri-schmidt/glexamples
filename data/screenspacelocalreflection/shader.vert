@@ -7,9 +7,11 @@ layout(location = 1) in vec3 a_normal;
 out vec3 v_normal;
 
 uniform mat4 transform;
+uniform mat4 translate;
 
 void main()
 {
-	gl_Position = transform * vec4(a_vertex, 1.0);
+    vec4 a = vec4(a_vertex, 1.0) * translate;
+	gl_Position = transform * a;
 	v_normal = a_normal;
 }

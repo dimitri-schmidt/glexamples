@@ -74,87 +74,80 @@ void ScreenSpaceLocalReflection::onInitialize()
 
 	m_vertices = new Buffer;
 	m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
-		-0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
-		 0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+//        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+//         1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+//        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+
+        -0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
+         0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
          0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
         -0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-		 0.4f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
-		 0.4f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-		 0.4f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-		 0.4f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
-		 0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
-		-0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		-0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		 0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		-0.4f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
-		-0.4f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-		-0.4f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-		-0.4f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
-		-0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
-		 0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
-		 0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-		-0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-		-0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
-		 0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
-		 0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
-		-0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
-
-		-2.0f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
-		-1.2f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-		-1.2f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-		-2.0f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-		-1.2f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
-		-1.2f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-		-1.2f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-		-1.2f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
-		-1.2f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
-		-2.0f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		-2.0f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		-1.2f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-		-2.0f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
-		-2.0f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-		-2.0f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-		-2.0f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
-		-2.0f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
-		-1.2f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
-		-1.2f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-		-2.0f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-		-2.0f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
-		-1.2f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
-		-1.2f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
-		-2.0f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
+         0.4f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
+         0.4f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+         0.4f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+         0.4f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
+         0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
+        -0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+        -0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+         0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+        -0.4f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
+        -0.4f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+        -0.4f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+        -0.4f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
+        -0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
+         0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
+         0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+        -0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+        -0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
+         0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
+         0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
+        -0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
 	}, gl::GL_STATIC_DRAW);
 
 	m_indices = new Buffer;
 	m_indices->setData(std::vector < unsigned int > {
-		 0,  1,  2,
-		 2,  3,  0,
-		 4,  5,  6,
-		 6,  7,  4,
-		 8,  9, 10,
-		10, 11,  8,
-		12, 13, 14,
-		14, 15, 12,
-		16, 17, 18,
-		18, 19, 16,
-		20, 21, 22,
-		22, 23, 20,
+//         0,
+//         1,
+//         2,
+//         3,
+//         4,
+//         5,
+//         6,
+//         7,
+//         8,
+//         9,
+//        10,
+//        11,
+//        12,
+//        13
 
-		24, 25, 26,
-		26, 27, 24,
-		28, 29, 30,
-		30, 31, 28,
-		32, 33, 34,
-		34, 35, 32,
-		36, 37, 38,
-		38, 39, 36,
-		40, 41, 42,
-		42, 43, 40,
-		44, 45, 46,
-		46, 47, 44
+         0,  1,  2,
+         2,  3,  0,
+         4,  5,  6,
+         6,  7,  4,
+         8,  9, 10,
+        10, 11,  8,
+        12, 13, 14,
+        14, 15, 12,
+        16, 17, 18,
+        18, 19, 16,
+        20, 21, 22,
+        22, 23, 20,
 	}, gl::GL_STATIC_DRAW);
 
-    m_size = 24 * 3 * sizeof(int);
+    m_size = 12 * 3 * sizeof(int);
+//    m_size = 14 * sizeof(int);
 
 	m_vao = new VertexArray;
 	m_vao->bind();
@@ -180,6 +173,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 		);
 
 	m_transformLocation = m_program->getUniformLocation("transform");
+    m_translateLocation = m_program->getUniformLocation("translate");
 
 	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
@@ -223,9 +217,29 @@ void ScreenSpaceLocalReflection::onPaint()
 
 	//m_icosahedron->draw();
 
+    auto translateMatrix = glm::mat4(1.0f, 0.0f, 0.0f,-1.0f,
+                                     0.0f, 1.0f, 0.0f, 0.0f,
+                                     0.0f, 0.0f, 1.0f, 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f);
+
+    m_program->setUniform(m_translateLocation, translateMatrix);
+
+
 	m_vao->bind();	
-	m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
+    m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
 	m_vao->unbind();
+
+
+    translateMatrix = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
+                                0.0f, 1.0f, 0.0f, 0.0f,
+                                0.0f, 0.0f, 1.0f, 0.0f,
+                                0.0f, 0.0f, 0.0f, 1.0f);
+
+    m_program->setUniform(m_translateLocation, translateMatrix);
+
+    m_vao->bind();
+    m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
+    m_vao->unbind();
 
 	m_program->release();
 
