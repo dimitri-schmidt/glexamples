@@ -25,6 +25,8 @@
 #include <gloperate/primitives/Icosahedron.h>
 #include <globjects/VertexAttributeBinding.h>
 
+#include <math.h>
+
 
 using namespace gl;
 using namespace glm;
@@ -217,9 +219,9 @@ void ScreenSpaceLocalReflection::onPaint()
 
 	//m_icosahedron->draw();
 
-    auto translateMatrix = glm::mat4(1.0f, 0.0f, 0.0f,-1.0f,
+    auto translateMatrix = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4),-1.0f,
                                      0.0f, 1.0f, 0.0f, 0.0f,
-                                     0.0f, 0.0f, 1.0f, 0.0f,
+                                     sin(M_PI/4), 0.0f, cos(M_PI/4), 0.0f,
                                      0.0f, 0.0f, 0.0f, 1.0f);
 
     m_program->setUniform(m_translateLocation, translateMatrix);
@@ -230,9 +232,9 @@ void ScreenSpaceLocalReflection::onPaint()
 	m_vao->unbind();
 
 
-    translateMatrix = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
+    translateMatrix = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 1.0f,
                                 0.0f, 1.0f, 0.0f, 0.0f,
-                                0.0f, 0.0f, 1.0f, 0.0f,
+                                sin(M_PI/4), 0.0f, cos(M_PI/4), 0.0f,
                                 0.0f, 0.0f, 0.0f, 1.0f);
 
     m_program->setUniform(m_translateLocation, translateMatrix);
