@@ -73,53 +73,85 @@ void ScreenSpaceLocalReflection::onInitialize()
 	//m_icosahedron = new gloperate::Icosahedron{ 3 };
 
 	m_vertices = new Buffer;
-	m_vertices->setData(std::vector < float > {
-		-0.4f, -0.4f, -0.4f,
-         0.4f, -0.4f, -0.4f,
-         0.4f,  0.4f, -0.4f,
-        -0.4f,  0.4f, -0.4f,
-        -0.4f, -0.4f,  0.4f,
-         0.4f, -0.4f,  0.4f,
-         0.4f,  0.4f,  0.4f,
-        -0.4f,  0.4f,  0.4f,
+	m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
+		-0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
+		 0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+         0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+        -0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+		 0.4f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
+		 0.4f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+		 0.4f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+		 0.4f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
+		 0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
+		-0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		-0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		 0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		-0.4f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
+		-0.4f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+		-0.4f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+		-0.4f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
+		-0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
+		 0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
+		 0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+		-0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+		-0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
+		 0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
+		 0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
+		-0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
 
-        -1.2f, -0.4f, -0.4f,
-        -2.0f, -0.4f, -0.4f,
-        -2.0f,  0.4f, -0.4f,
-        -1.2f,  0.4f, -0.4f,
-        -1.2f, -0.4f,  0.4f,
-        -2.0f, -0.4f,  0.4f,
-        -2.0f,  0.4f,  0.4f,
-        -1.2f,  0.4f,  0.4f
+		-2.0f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
+		-1.2f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+		-1.2f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+		-2.0f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
+		-1.2f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
+		-1.2f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+		-1.2f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
+		-1.2f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
+		-1.2f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
+		-2.0f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		-2.0f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		-1.2f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
+		-2.0f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
+		-2.0f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+		-2.0f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
+		-2.0f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
+		-2.0f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
+		-1.2f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
+		-1.2f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+		-2.0f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
+		-2.0f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
+		-1.2f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
+		-1.2f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
+		-2.0f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
 	}, gl::GL_STATIC_DRAW);
 
 	m_indices = new Buffer;
 	m_indices->setData(std::vector < unsigned int > {
-		0, 1, 2,
-		2, 3, 0,
-		1, 5, 6,
-		6, 2, 1,
-		5, 4, 7,
-		7, 6, 5,
-		4, 0, 3,
-		3, 7, 4,
-		5, 4, 0,
-		0, 1, 5,
-		3, 2, 6,
-        6, 7, 3,
+		 0,  1,  2,
+		 2,  3,  0,
+		 4,  5,  6,
+		 6,  7,  4,
+		 8,  9, 10,
+		10, 11,  8,
+		12, 13, 14,
+		14, 15, 12,
+		16, 17, 18,
+		18, 19, 16,
+		20, 21, 22,
+		22, 23, 20,
 
-        8,  9, 10,
-       10, 11,  8,
-        9, 13, 14,
-       14, 10,  9,
-       13, 12, 15,
-       15, 14, 13,
-       12,  8, 11,
-       11, 15, 12,
-       13, 12,  8,
-        8,  9, 13,
-       11, 10, 14,
-       14, 15, 11
+		24, 25, 26,
+		26, 27, 24,
+		28, 29, 30,
+		30, 31, 28,
+		32, 33, 34,
+		34, 35, 32,
+		36, 37, 38,
+		38, 39, 36,
+		40, 41, 42,
+		42, 43, 40,
+		44, 45, 46,
+		46, 47, 44
 	}, gl::GL_STATIC_DRAW);
 
     m_size = 24 * 3 * sizeof(int);
@@ -131,10 +163,15 @@ void ScreenSpaceLocalReflection::onInitialize()
 
 	auto binding = m_vao->binding(0);
 	binding->setAttribute(0);	
-	binding->setBuffer(m_vertices, 0, 3 * sizeof(float));
+	binding->setBuffer(m_vertices, 0, 6 * sizeof(float));
 	binding->setFormat(3, gl::GL_FLOAT);
-
 	m_vao->enable(0);
+
+	binding = m_vao->binding(1);
+	binding->setAttribute(1);
+	binding->setBuffer(m_vertices, 3 * sizeof(float), 6 * sizeof(float));
+	binding->setFormat(3, gl::GL_FLOAT);
+	m_vao->enable(1);
 
 	m_program = new Program{};
 	m_program->attach(
