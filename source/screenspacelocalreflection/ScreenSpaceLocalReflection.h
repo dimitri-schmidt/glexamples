@@ -49,6 +49,7 @@ protected:
     globjects::ref_ptr<globjects::Program> m_program;
     gl::GLint m_transformLocation;
     gl::GLint m_translateLocation;
+	gl::GLint m_rotateLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;

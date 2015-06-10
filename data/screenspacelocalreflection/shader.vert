@@ -8,10 +8,11 @@ out vec3 v_normal;
 
 uniform mat4 transform;
 uniform mat4 translate;
+uniform mat4 rotate;
 
 void main()
 {
     vec4 a = vec4(a_vertex, 1.0) * translate;
 	gl_Position = transform * a;
-	v_normal = a_normal;
+	v_normal = vec3(vec4(a_normal, 1.0) * rotate).xyz;
 }

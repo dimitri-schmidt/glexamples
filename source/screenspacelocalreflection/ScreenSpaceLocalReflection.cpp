@@ -25,6 +25,7 @@
 #include <gloperate/primitives/Icosahedron.h>
 #include <globjects/VertexAttributeBinding.h>
 
+#define _USE_MATH_DEFINES 
 #include <math.h>
 
 
@@ -72,8 +73,6 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_grid = new gloperate::AdaptiveGrid{};
 	m_grid->setColor({ 0.6f, 0.6f, 0.6f });
 
-	//m_icosahedron = new gloperate::Icosahedron{ 3 };
-
 	m_vertices = new Buffer;
 	m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
 //        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
@@ -91,35 +90,35 @@ void ScreenSpaceLocalReflection::onInitialize()
 //         1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 //        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
 
-        -0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,	// front
-         0.4f, -0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-         0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-        -0.4f,  0.4f, -0.4f,  0.0f,  0.0f, -1.0f,
-         0.4f, -0.4f, -0.4f,  1.0f,  0.0f,  0.0f,	// right
-         0.4f, -0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-         0.4f,  0.4f,  0.4f,  1.0f,  0.0f,  0.0f,
-         0.4f,  0.4f, -0.4f,  1.0f,  0.0f,  0.0f,
-         0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,	// back
-        -0.4f, -0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-        -0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-         0.4f,  0.4f,  0.4f,  0.0f,  0.0f,  1.0f,
-        -0.4f, -0.4f,  0.4f, -1.0f,  0.0f,  0.0f,	// left
-        -0.4f, -0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-        -0.4f,  0.4f, -0.4f, -1.0f,  0.0f,  0.0f,
-        -0.4f,  0.4f,  0.4f, -1.0f,  0.0f,  0.0f,
-        -0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,	// bottom
-         0.4f, -0.4f,  0.4f,  0.0f, -1.0f,  0.0f,
-         0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-        -0.4f, -0.4f, -0.4f,  0.0f, -1.0f,  0.0f,
-        -0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,	// top
-         0.4f,  0.4f, -0.4f,  0.0f,  1.0f,  0.0f,
-         0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
-        -0.4f,  0.4f,  0.4f,  0.0f,  1.0f,  0.0f,
+		-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,	// front
+		 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,	// right
+		 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+		 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+		 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
+		 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,	// back
+		-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,	// left
+		-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
+		-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
+		-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f,
+		-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,	// bottom
+		 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,
+		 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,
+		-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,
+		-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f,	// top
+		 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,
 	}, gl::GL_STATIC_DRAW);
 
 	m_indices = new Buffer;
 	m_indices->setData(std::vector < unsigned int > {
-//         0,
+//         0,	// triangle strip
 //         1,
 //         2,
 //         3,
@@ -149,7 +148,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 	}, gl::GL_STATIC_DRAW);
 
     m_size = 12 * 3 * sizeof(int);
-//    m_size = 14 * sizeof(int);
+//    m_size = 14 * sizeof(int);	// triangle strip
 
 	m_vao = new VertexArray;
 	m_vao->bind();
@@ -176,6 +175,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 
 	m_transformLocation = m_program->getUniformLocation("transform");
     m_translateLocation = m_program->getUniformLocation("translate");
+	m_rotateLocation = m_program->getUniformLocation("rotate");
 
 	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
@@ -217,27 +217,41 @@ void ScreenSpaceLocalReflection::onPaint()
 	m_program->use();
 	m_program->setUniform(m_transformLocation, transform);
 
-	//m_icosahedron->draw();
+	auto scale = glm::mat4(0.4f, 0.0f, 0.0f, 0.0f,
+						   0.0f, 0.4f, 0.0f, 0.0f,
+						   0.0f, 0.0f, 0.4f, 0.0f,
+						   0.0f, 0.0f, 0.0f, 1.0f);
 
-    auto translateMatrix = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4),-1.0f,
-                                     0.0f, 1.0f, 0.0f, 0.0f,
-                                     sin(M_PI/4), 0.0f, cos(M_PI/4), 0.0f,
-                                     0.0f, 0.0f, 0.0f, 1.0f);
+    auto rotate = glm::mat4(cos(-M_PI/4), 0.0f, -sin(-M_PI/4), -0.5f,
+							0.0f,		  1.0f,  0.0f,		    0.0f,
+                            sin(-M_PI/4), 0.0f,  cos(-M_PI/4),  0.0f,
+                            0.0f,		  0.0f,  0.0f,		    1.0f);
+	
+	auto translate = glm::mat4(1.0f, 0.0f, 0.0f, -1.0f,
+							   0.0f, 1.0f, 0.0f,  0.0f,
+							   0.0f, 0.0f, 1.0f,  0.0f,
+						       0.0f, 0.0f, 0.0f,  1.0f);
 
-    m_program->setUniform(m_translateLocation, translateMatrix);
-
+	m_program->setUniform(m_translateLocation, scale * rotate * translate);
+	m_program->setUniform(2, rotate);
 
 	m_vao->bind();	
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
 	m_vao->unbind();
 
 
-    translateMatrix = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 1.0f,
-                                0.0f, 1.0f, 0.0f, 0.0f,
-                                sin(M_PI/4), 0.0f, cos(M_PI/4), 0.0f,
-                                0.0f, 0.0f, 0.0f, 1.0f);
+    rotate = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 0.5f,
+                       0.0f,		1.0f,  0.0f,		0.0f,
+                       sin(M_PI/4), 0.0f,  cos(M_PI/4), 0.0f,
+                       0.0f,		0.0f,  0.0f,		1.0f);
 
-    m_program->setUniform(m_translateLocation, translateMatrix);
+	translate = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
+						  0.0f, 1.0f, 0.0f, 0.0f,
+						  0.0f, 0.0f, 1.0f, 0.0f,
+						  0.0f, 0.0f, 0.0f, 1.0f);
+
+	m_program->setUniform(m_translateLocation, scale * rotate * translate);
+	m_program->setUniform(m_rotateLocation, rotate);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
