@@ -73,6 +73,15 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_grid = new gloperate::AdaptiveGrid{};
 	m_grid->setColor({ 0.6f, 0.6f, 0.6f });
 
+	m_textureColor = new Texture();
+	m_textureColor->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+
+	m_fbo = new Framebuffer();
+	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_textureColor, 0);
+	GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	GLsizei n = 1;
+	m_fbo->setDrawBuffers(n, drawBuffers);
+
 	m_vertices = new Buffer;
 	m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
 //        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
@@ -167,22 +176,33 @@ void ScreenSpaceLocalReflection::onInitialize()
 	binding->setFormat(3, gl::GL_FLOAT);
 	m_vao->enable(1);
 
-	m_program = new Program{};
-	m_program->attach(
+	m_cubeProgram = new Program{};
+	m_cubeProgram->attach(
 		Shader::fromFile(GL_VERTEX_SHADER, "data/screenspacelocalreflection/shader.vert"),
 		Shader::fromFile(GL_FRAGMENT_SHADER, "data/screenspacelocalreflection/shader.frag")
 		);
 
-	m_transformLocation = m_program->getUniformLocation("transform");
-    m_translateLocation = m_program->getUniformLocation("translate");
-	m_rotateLocation = m_program->getUniformLocation("rotate");
-    m_scaleLocation = m_program->getUniformLocation("scale");
+	m_transformLocation = m_cubeProgram->getUniformLocation("transform");
+	m_translateLocation = m_cubeProgram->getUniformLocation("translate");
+	m_rotateLocation = m_cubeProgram->getUniformLocation("rotate");
+	m_scaleLocation = m_cubeProgram->getUniformLocation("scale");
+
+	m_quadProgram = new Program{};
+	m_quadProgram->attach(
+		Shader::fromFile(GL_VERTEX_SHADER, "data/screenspacelocalreflection/quad.vert"),
+		Shader::fromFile(GL_FRAGMENT_SHADER, "data/screenspacelocalreflection/quad.frag")
+		);
+
+	m_textureColorLocation = m_quadProgram->getUniformLocation("textureColor");
+
+	m_saQuad = new gloperate::ScreenAlignedQuad(m_quadProgram);
 
 	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
 	setupProjection();
 
-	m_vao->unbind();	
+	m_vao->unbind();
+	m_fbo->unbind();
 }
 
 void ScreenSpaceLocalReflection::onPaint()
@@ -195,15 +215,12 @@ void ScreenSpaceLocalReflection::onPaint()
 			m_viewportCapability->width(),
 			m_viewportCapability->height());
 
+		m_textureColor->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+
 		m_viewportCapability->setChanged(false);
 	}
 
-	auto fbo = m_targetFramebufferCapability->framebuffer();
-
-	if (!fbo)
-		fbo = globjects::Framebuffer::defaultFBO();
-
-	fbo->bind(GL_FRAMEBUFFER);
+	m_fbo->bind();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -215,8 +232,9 @@ void ScreenSpaceLocalReflection::onPaint()
 	m_grid->update(eye, transform);
 	m_grid->draw();
 
-	m_program->use();
-	m_program->setUniform(m_transformLocation, transform);
+	m_cubeProgram->use();
+	m_cubeProgram->setUniform(m_textureColorLocation, m_textureColor);
+	m_cubeProgram->setUniform(m_transformLocation, transform);
 
     auto scale = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
                            0.0f, 0.5f, 0.0f, 0.0f,
@@ -233,9 +251,9 @@ void ScreenSpaceLocalReflection::onPaint()
 							   0.0f, 0.0f, 1.0f,  0.0f,
 						       0.0f, 0.0f, 0.0f,  1.0f);
 
-    m_program->setUniform(m_translateLocation, translate);
-    m_program->setUniform(m_rotateLocation, rotate);
-    m_program->setUniform(m_scaleLocation, scale);
+	m_cubeProgram->setUniform(m_translateLocation, translate);
+	m_cubeProgram->setUniform(m_rotateLocation, rotate);
+	m_cubeProgram->setUniform(m_scaleLocation, scale);
 
 	m_vao->bind();	
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
@@ -252,15 +270,31 @@ void ScreenSpaceLocalReflection::onPaint()
 						  0.0f, 0.0f, 1.0f, 0.0f,
 						  0.0f, 0.0f, 0.0f, 1.0f);
 
-    m_program->setUniform(m_translateLocation, translate);
-	m_program->setUniform(m_rotateLocation, rotate);
-    m_program->setUniform(m_scaleLocation, scale);
+	m_cubeProgram->setUniform(m_translateLocation, translate);
+	m_cubeProgram->setUniform(m_rotateLocation, rotate);
+	m_cubeProgram->setUniform(m_scaleLocation, scale);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
     m_vao->unbind();
 
-	m_program->release();
+	m_cubeProgram->release();
+	m_fbo->unbind();
 
-	Framebuffer::unbind(GL_FRAMEBUFFER);
+	auto fbo = m_targetFramebufferCapability->framebuffer();
+
+	if (!fbo)
+		fbo = Framebuffer::defaultFBO();
+
+	fbo->bind();
+
+	m_quadProgram->use();
+
+	m_quadProgram->setUniform(m_textureColorLocation, m_textureColor);
+	m_saQuad->draw();
+
+	m_quadProgram->release();
+
+	fbo->unbind();
+	//Framebuffer::unbind(GL_FRAMEBUFFER);
 }

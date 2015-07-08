@@ -7,6 +7,9 @@
 #include <globjects/base/ref_ptr.h>
 #include <globjects/Buffer.h>
 #include <globjects/VertexArray.h>
+#include <globjects/Framebuffer.h>
+#include <globjects/Texture.h>
+#include <gloperate/primitives/ScreenAlignedQuad.h>
 
 #include <gloperate/painter/Painter.h>
 
@@ -46,13 +49,18 @@ protected:
 
     /* members */
     globjects::ref_ptr<gloperate::AdaptiveGrid> m_grid;
-    globjects::ref_ptr<globjects::Program> m_program;
+    globjects::ref_ptr<globjects::Program> m_cubeProgram;
+	globjects::ref_ptr<globjects::Program> m_quadProgram;
     gl::GLint m_transformLocation;
     gl::GLint m_translateLocation;
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
+	gl::GLint m_textureColorLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;
 	int m_size;
+	globjects::Texture * m_textureColor;
+	globjects::Framebuffer * m_fbo;
+	gloperate::ScreenAlignedQuad * m_saQuad;
 };
