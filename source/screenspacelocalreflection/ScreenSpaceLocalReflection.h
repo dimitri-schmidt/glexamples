@@ -28,7 +28,7 @@ namespace gloperate
 class ScreenSpaceLocalReflection : public gloperate::Painter
 {
 public:
-    ScreenSpaceLocalReflection(gloperate::ResourceManager & resourceManager);
+    ScreenSpaceLocalReflection(gloperate::ResourceManager & resourceManager, const std::string & relDataPath);
 	virtual ~ScreenSpaceLocalReflection();
 
     void setupProjection();
