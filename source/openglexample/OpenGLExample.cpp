@@ -30,8 +30,8 @@
 #include <globjects/Texture.h>
 #include <globjects/AttachedTexture.h>
 
-OpenGLExample::OpenGLExample(gloperate::ResourceManager & resourceManager)
-:   Painter(resourceManager)
+OpenGLExample::OpenGLExample(gloperate::ResourceManager & resourceManager, const std::string & relDataPath)
+:   Painter("EmptyExample", resourceManager, relDataPath)
 ,   m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
 ,   m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 ,   m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
@@ -69,8 +69,8 @@ void OpenGLExample::onInitialize()
     m_vertices = new globjects::Buffer;
     m_vertices->setData(std::vector<float>{
         -0.8f, -0.8f,
-        0.8f, -0.8f,
-        0.8f, 0.8f
+         0.8f, -0.8f,
+         0.8f,  0.8f
     }, gl::GL_STATIC_DRAW);
 
     m_vao = new globjects::VertexArray;

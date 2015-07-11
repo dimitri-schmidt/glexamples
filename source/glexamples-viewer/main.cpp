@@ -3,21 +3,22 @@
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS /entry:mainCRTStartup")
 #endif
 
-#include <gloperate-qtapplication/AbstractApplication.h>
-
-#include <QFileInfo>
 
 #include <memory>
 
-#include <gloperate-qtapplication/Viewer.h>
+#include <QFileInfo>
+
+#include <gloperate-qt/viewer/Application.h>
+#include <gloperate-qt/viewer/Viewer.h>
 
 #include <widgetzeug/dark_fusion_style.hpp>
 
-class Application : public gloperate_qtapplication::AbstractApplication
+
+class Application : public gloperate_qt::Application
 {
 public:
     Application(int & argc, char ** argv)
-        : AbstractApplication(argc, argv)
+    : gloperate_qt::Application(argc, argv)
     {
         const QFileInfo fi(QCoreApplication::applicationFilePath());
 
@@ -33,13 +34,14 @@ public:
     virtual ~Application() = default;
 };
 
+
 int main(int argc, char * argv[])
 {
     Application app(argc, argv);
 
     widgetzeug::enableDarkFusionStyle();
 
-    gloperate_qtapplication::Viewer viewer;
+    gloperate_qt::Viewer viewer;
     viewer.show();
 
     return app.exec();

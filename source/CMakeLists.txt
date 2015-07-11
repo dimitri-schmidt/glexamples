@@ -18,10 +18,10 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
 
     ${GLM_INCLUDE_DIR}
-    ${GLBINDING_INCLUDES}
-    ${GLOBJECTS_INCLUDES}
-    ${GLOPERATE_INCLUDES}
-    ${LIBZEUG_INCLUDES}
+    ${GLBINDING_INCLUDE_DIRS}
+    ${GLOBJECTS_INCLUDE_DIRS}
+    ${GLOPERATE_INCLUDE_DIRS}
+    ${LIBZEUG_INCLUDE_DIRS}
 )
 
 # Define common libraries for all examples
