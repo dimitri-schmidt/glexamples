@@ -6,7 +6,7 @@
 
 GLOPERATE_PLUGIN_LIBRARY
 
-    GLOPERATE_PLUGIN(ScreenSpaceLocalReflection
+    GLOPERATE_PAINTER_PLUGIN(ScreenSpaceLocalReflection
     , "ScreenSpaceLocalReflection"
     , "Screen Space Local Reflection"
     , GLEXAMPLES_AUTHOR_ORGANIZATION
