@@ -151,7 +151,7 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
 
-    m_fboColorAttachmentLocation = m_sceneProgram->getUniformLocation("fboTexture");
+    m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
 }
 
@@ -180,9 +180,9 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_grid = new gloperate::AdaptiveGrid{};
 	m_grid->setColor({ 0.6f, 0.6f, 0.6f });
 
-	initFramebuffer();
-	initScene();
     initPrograms();
+	initFramebuffer();
+    initScene();
 
 	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
