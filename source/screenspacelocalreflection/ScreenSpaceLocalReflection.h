@@ -13,7 +13,9 @@
 
 namespace globjects
 {
+    class Framebuffer;
     class Program;
+    class Texture;
 }
 
 namespace gloperate
@@ -36,6 +38,7 @@ public:
 protected:
     virtual void onInitialize() override;
     virtual void onPaint() override;
+    void initializeFbo();
 
 protected:
     /* capabilities */
@@ -53,6 +56,14 @@ protected:
     gl::GLint m_scaleLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
-	globjects::ref_ptr<globjects::VertexArray> m_vao;
+	globjects::ref_ptr<globjects::VertexArray> m_vao;   
 	int m_size;
+
+
+    globjects::ref_ptr<globjects::Program> m_fboProgram;
+    gl::GLint m_fboColorAttachmentLocation;
+    globjects::ref_ptr<globjects::Framebuffer> m_fbo;
+    globjects::ref_ptr<globjects::Texture> m_fboColorAttachment;
+
+
 };

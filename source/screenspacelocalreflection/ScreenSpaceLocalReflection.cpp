@@ -10,6 +10,8 @@
 #include <globjects/logging.h>
 #include <globjects/DebugMessage.h>
 #include <globjects/Program.h>
+#include <globjects/Framebuffer.h>
+#include <globjects/Texture.h>
 
 #include <widgetzeug/make_unique.hpp>
 
@@ -24,6 +26,7 @@
 #include <gloperate/primitives/AdaptiveGrid.h>
 #include <gloperate/primitives/Icosahedron.h>
 #include <globjects/VertexAttributeBinding.h>
+#include <gloperate/primitives/ScreenAlignedQuad.h>
 
 #define _USE_MATH_DEFINES 
 #include <math.h>
@@ -72,6 +75,8 @@ void ScreenSpaceLocalReflection::onInitialize()
 
 	m_grid = new gloperate::AdaptiveGrid{};
 	m_grid->setColor({ 0.6f, 0.6f, 0.6f });
+
+
 
 	m_vertices = new Buffer;
 	m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
@@ -183,6 +188,33 @@ void ScreenSpaceLocalReflection::onInitialize()
 	setupProjection();
 
 	m_vao->unbind();	
+
+
+
+
+
+    initializeFbo();
+
+
+    m_fboColorAttachment = Texture::createDefault(GL_TEXTURE_2D);
+
+    const auto size = glm::ivec2{m_viewportCapability->width(), m_viewportCapability->height()};
+    m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+
+    m_fbo = make_ref<Framebuffer>();
+    m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_fboColorAttachment);
+
+    m_fbo->printStatus(true);
+}
+
+void ScreenSpaceLocalReflection::initializeFbo()
+{
+    m_fboProgram = new Program{};
+    m_fboProgram->attach(
+        Shader::fromFile(GL_VERTEX_SHADER, "data/screenspacelocalreflection/fbo.vert"),
+        Shader::fromFile(GL_FRAGMENT_SHADER, "data/screenspacelocalreflection/fbo.frag")
+        );
+    m_fboColorAttachmentLocation = m_program->getUniformLocation("fboTexture");
 }
 
 void ScreenSpaceLocalReflection::onPaint()
@@ -198,6 +230,7 @@ void ScreenSpaceLocalReflection::onPaint()
 		m_viewportCapability->setChanged(false);
 	}
 
+
 	auto fbo = m_targetFramebufferCapability->framebuffer();
 
 	if (!fbo)
@@ -207,39 +240,49 @@ void ScreenSpaceLocalReflection::onPaint()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
 	const auto transform = m_projectionCapability->projection() * m_cameraCapability->view();
 	const auto eye = m_cameraCapability->eye();
 
 	m_grid->update(eye, transform);
-	m_grid->draw();
+    m_grid->draw();
 
-	m_program->use();
-	m_program->setUniform(m_transformLocation, transform);
+
+
+
+    m_fbo->bind(GL_FRAMEBUFFER);
+    m_fboColorAttachment->bindActive(GL_TEXTURE0);
+    m_fbo->setDrawBuffer(gl::GL_COLOR_ATTACHMENT0);
+
+
+
+
+    m_program->use();
+    m_program->setUniform(m_transformLocation, transform);
 
     auto scale = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
                            0.0f, 0.5f, 0.0f, 0.0f,
                            0.0f, 0.0f, 0.5f, 0.0f,
-						   0.0f, 0.0f, 0.0f, 1.0f);
+                           0.0f, 0.0f, 0.0f, 1.0f);
 
     auto rotate = glm::mat4(cos(-M_PI/4), 0.0f, -sin(-M_PI/4),  0.0f,
-							0.0f,		  1.0f,  0.0f,		    0.0f,
+                            0.0f,		  1.0f,  0.0f,		    0.0f,
                             sin(-M_PI/4), 0.0f,  cos(-M_PI/4),  0.0f,
                             0.0f,		  0.0f,  0.0f,		    1.0f);
 	
-	auto translate = glm::mat4(1.0f, 0.0f, 0.0f, -1.0f,
-							   0.0f, 1.0f, 0.0f,  0.0f,
-							   0.0f, 0.0f, 1.0f,  0.0f,
-						       0.0f, 0.0f, 0.0f,  1.0f);
+    auto translate = glm::mat4(1.0f, 0.0f, 0.0f, -1.0f,
+                               0.0f, 1.0f, 0.0f,  0.0f,
+                               0.0f, 0.0f, 1.0f,  0.0f,
+                               0.0f, 0.0f, 0.0f,  1.0f);
 
     m_program->setUniform(m_translateLocation, translate);
     m_program->setUniform(m_rotateLocation, rotate);
     m_program->setUniform(m_scaleLocation, scale);
 
-	m_vao->bind();	
+    m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
-	m_vao->unbind();
+    m_vao->unbind();
 
 
     rotate = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 0.0f,
@@ -247,20 +290,36 @@ void ScreenSpaceLocalReflection::onPaint()
                        sin(M_PI/4), 0.0f,  cos(M_PI/4), 0.0f,
                        0.0f,		0.0f,  0.0f,		1.0f);
 
-	translate = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
-						  0.0f, 1.0f, 0.0f, 0.0f,
-						  0.0f, 0.0f, 1.0f, 0.0f,
-						  0.0f, 0.0f, 0.0f, 1.0f);
+    translate = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
+                          0.0f, 1.0f, 0.0f, 0.0f,
+                          0.0f, 0.0f, 1.0f, 0.0f,
+                          0.0f, 0.0f, 0.0f, 1.0f);
 
     m_program->setUniform(m_translateLocation, translate);
-	m_program->setUniform(m_rotateLocation, rotate);
+    m_program->setUniform(m_rotateLocation, rotate);
     m_program->setUniform(m_scaleLocation, scale);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
     m_vao->unbind();
 
-	m_program->release();
+    m_program->release();
+
+    m_fbo->unbind();
+
+
+
+
+
+    fbo->bind(GL_FRAMEBUFFER);
+
+    m_fboProgram->use();
+    m_fboProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
+
+    auto quad = new gloperate::ScreenAlignedQuad(m_fboProgram);
+    quad->draw();
+
+
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);
 }
