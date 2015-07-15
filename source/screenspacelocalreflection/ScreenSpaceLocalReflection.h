@@ -54,8 +54,8 @@ protected:
 
     /* members */
     globjects::ref_ptr<gloperate::AdaptiveGrid> m_grid;
-	globjects::ref_ptr<globjects::Program> m_colorProgram;
-	globjects::ref_ptr<globjects::Program> m_finalProgram;
+    globjects::ref_ptr<globjects::Program> m_sceneProgram;
+    globjects::ref_ptr<globjects::Program> m_quadProgram;
     gl::GLint m_transformLocation;
     gl::GLint m_translateLocation;
 	gl::GLint m_rotateLocation;
@@ -67,8 +67,6 @@ protected:
 
 	int m_size;
 
-
-    globjects::ref_ptr<globjects::Program> m_fboProgram;
     gl::GLint m_fboColorAttachmentLocation;
     globjects::ref_ptr<globjects::Framebuffer> m_fbo;
     globjects::ref_ptr<globjects::Texture> m_fboColorAttachment;
