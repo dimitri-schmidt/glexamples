@@ -160,6 +160,9 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_depthLocation = m_quadProgram->getUniformLocation("depthTexture");
     m_quadProgram->setUniform(m_depthLocation, 2);
 
+	m_positionAttachmentLocation = m_quadProgram->getUniformLocation("positionTexture");
+	m_quadProgram->setUniform(m_positionAttachmentLocation, 3);
+
 	m_quadProgram->release();
 
 	m_saQuad = make_ref<gloperate::ScreenAlignedQuad>(m_quadProgram);
@@ -176,10 +179,13 @@ void ScreenSpaceLocalReflection::initFramebuffer()
     m_fboDepthAttachment = Texture::createDefault(GL_TEXTURE_2D);
     m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 
+	m_fboPositionAttachment = Texture::createDefault(GL_TEXTURE_2D);
+	m_fboPositionAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 
     m_fbo = make_ref<Framebuffer>();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_fboColorAttachment);
 	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT1, m_fboNormalAttachment);
+	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT2, m_fboPositionAttachment);
     m_fbo->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_fboDepthAttachment);
 
     m_fbo->printStatus(true);
@@ -329,7 +335,8 @@ void ScreenSpaceLocalReflection::onPaint()
 		m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 		m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
-
+		m_fboPositionAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+	
 		m_viewportCapability->setChanged(false);
 	}
 
@@ -355,7 +362,8 @@ void ScreenSpaceLocalReflection::onPaint()
     m_fboColorAttachment->bindActive(GL_TEXTURE0);
 	m_fboNormalAttachment->bindActive(GL_TEXTURE1);
 	m_fboDepthAttachment->bindActive(GL_TEXTURE2);
-	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_COLOR_ATTACHMENT1});
+	m_fboPositionAttachment->bindActive(GL_TEXTURE3);
+	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_COLOR_ATTACHMENT1, gl::GL_COLOR_ATTACHMENT2});
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -380,8 +388,6 @@ void ScreenSpaceLocalReflection::onPaint()
 //    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
 //    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
     m_saQuad->draw();
-
-
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);
 }
