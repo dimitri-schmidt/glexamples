@@ -145,11 +145,14 @@ void ScreenSpaceLocalReflection::initPrograms()
         );
 
     m_transformLocation = m_sceneProgram->getUniformLocation("transform");
+    m_eyeLocation = m_sceneProgram->getUniformLocation("eye");
     m_translateLocation = m_sceneProgram->getUniformLocation("translate");
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
 
 	m_quadProgram->use();
+
+    m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
 
     m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
@@ -180,7 +183,7 @@ void ScreenSpaceLocalReflection::initFramebuffer()
     m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 
 	m_fboPositionAttachment = Texture::createDefault(GL_TEXTURE_2D);
-	m_fboPositionAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+    m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 
     m_fbo = make_ref<Framebuffer>();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_fboColorAttachment);
@@ -214,10 +217,11 @@ void ScreenSpaceLocalReflection::onInitialize()
 	setupProjection();
 }
 
-void ScreenSpaceLocalReflection::drawScene(glm::tmat4x4<float, glm::highp> transform)
+void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat4 & transform)
 {
     m_sceneProgram->use();
     m_sceneProgram->setUniform(m_transformLocation, transform);
+    m_sceneProgram->setUniform(m_eyeLocation, eye);
 
 
 
@@ -335,7 +339,7 @@ void ScreenSpaceLocalReflection::onPaint()
 		m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 		m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
-		m_fboPositionAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+        m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 	
 		m_viewportCapability->setChanged(false);
 	}
@@ -367,7 +371,7 @@ void ScreenSpaceLocalReflection::onPaint()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    drawScene(transform);
+    drawScene(eye, transform);
 
     m_fbo->unbind();
 
@@ -387,6 +391,7 @@ void ScreenSpaceLocalReflection::onPaint()
 
 //    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
 //    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
+    m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);

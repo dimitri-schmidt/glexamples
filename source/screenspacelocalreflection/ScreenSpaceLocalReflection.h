@@ -44,7 +44,7 @@ protected:
     void initFramebuffer();
 	void renderScene();
 	void finalize();
-    void drawScene(glm::tmat4x4<float, glm::highp> transform);
+    void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
 
 protected:
     /* capabilities */
@@ -58,6 +58,8 @@ protected:
     globjects::ref_ptr<globjects::Program> m_sceneProgram;
     globjects::ref_ptr<globjects::Program> m_quadProgram;
     gl::GLint m_transformLocation;
+    gl::GLint m_quadTransformLocation;
+    gl::GLint m_eyeLocation;
     gl::GLint m_translateLocation;
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
