@@ -9,7 +9,7 @@ uniform sampler2D depthTexture;
 
 void main()
 {
-    //fragColor = texture(fboTexture, v_uv);
-     fragColor = texture(depthTexture, v_uv);
+    // fragColor = texture(fboTexture, v_uv);
+     fragColor = vec4(vec3(texture(depthTexture, v_uv).r), 1.0);
 	// fragColor = vec4(1.0, 0.5, 0.2, 1.0);
 }

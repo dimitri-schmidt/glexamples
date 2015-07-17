@@ -212,7 +212,7 @@ void ScreenSpaceLocalReflection::onPaint()
 			m_viewportCapability->height());
 
 		m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
-		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
+        m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 
 		m_viewportCapability->setChanged(false);
 	}
@@ -238,7 +238,7 @@ void ScreenSpaceLocalReflection::onPaint()
     m_fbo->bind(GL_FRAMEBUFFER);
     m_fboColorAttachment->bindActive(GL_TEXTURE0);
 	m_fboDepthAttachment->bindActive(GL_TEXTURE1);
-	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_DEPTH_ATTACHMENT });
+    m_fbo->setDrawBuffer(gl::GL_COLOR_ATTACHMENT0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
