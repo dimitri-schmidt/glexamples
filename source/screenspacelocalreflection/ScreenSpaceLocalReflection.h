@@ -44,6 +44,7 @@ protected:
     void initFramebuffer();
 	void renderScene();
 	void finalize();
+    void drawScene(glm::tmat4x4<float, glm::highp> transform);
 
 protected:
     /* capabilities */
