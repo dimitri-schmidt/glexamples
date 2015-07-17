@@ -1,11 +1,11 @@
 #version 330 core
 
 in vec3 v_normal;
-in vec4 v_position;
+in vec3 v_position;
 
 layout (location=0) out vec4 fragColor;
 layout (location=1) out vec4 fragNormal;
-layout (location=2) out vec4 fragPosition;	
+layout (location=2) out vec3 fragPosition;	
 
 void main()
 {

@@ -11,9 +11,9 @@ uniform sampler2D positionTexture;
 
 void main()
 {
-    fragColor = texture(fboTexture, v_uv);
+    // fragColor = texture(fboTexture, v_uv);
 	// fragColor = texture(normalTexture, v_uv);
     // fragColor = vec4(vec3(texture(depthTexture, v_uv).r), 1.0);
-	// fragColor = texture(positionTexture, v_uv);
+	fragColor = texture(positionTexture, v_uv);
 }
 	
