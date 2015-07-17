@@ -68,8 +68,12 @@ protected:
 	int m_size;
 
     gl::GLint m_fboColorAttachmentLocation;
+	gl::GLint m_normalAttachmentLocation;
+    gl::GLint m_depthLocation;
     globjects::ref_ptr<globjects::Framebuffer> m_fbo;
     globjects::ref_ptr<globjects::Texture> m_fboColorAttachment;
+	globjects::ref_ptr<globjects::Texture> m_fboNormalAttachment;
+    globjects::ref_ptr<globjects::Texture> m_fboDepthAttachment;
 
 
 };

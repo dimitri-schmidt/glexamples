@@ -144,15 +144,25 @@ void ScreenSpaceLocalReflection::initPrograms()
         Shader::fromFile(GL_FRAGMENT_SHADER, path + "quad.frag")
         );
 
-    m_saQuad = make_ref<gloperate::ScreenAlignedQuad>(m_quadProgram);
-
     m_transformLocation = m_sceneProgram->getUniformLocation("transform");
     m_translateLocation = m_sceneProgram->getUniformLocation("translate");
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
 
+	m_quadProgram->use();
+
     m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
-    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
+    m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
+
+	m_normalAttachmentLocation = m_quadProgram->getUniformLocation("normalTexture");
+	m_quadProgram->setUniform(m_normalAttachmentLocation, 1);
+
+    m_depthLocation = m_quadProgram->getUniformLocation("depthTexture");
+    m_quadProgram->setUniform(m_depthLocation, 2);
+
+	m_quadProgram->release();
+
+	m_saQuad = make_ref<gloperate::ScreenAlignedQuad>(m_quadProgram);
 }
 
 void ScreenSpaceLocalReflection::initFramebuffer()
@@ -160,8 +170,17 @@ void ScreenSpaceLocalReflection::initFramebuffer()
     m_fboColorAttachment = Texture::createDefault(GL_TEXTURE_2D);
     m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 
+	m_fboNormalAttachment = Texture::createDefault(GL_TEXTURE_2D);
+	m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+
+    m_fboDepthAttachment = Texture::createDefault(GL_TEXTURE_2D);
+    m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
+
+
     m_fbo = make_ref<Framebuffer>();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_fboColorAttachment);
+	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT1, m_fboNormalAttachment);
+    m_fbo->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_fboDepthAttachment);
 
     m_fbo->printStatus(true);
 }
@@ -200,6 +219,8 @@ void ScreenSpaceLocalReflection::onPaint()
 			m_viewportCapability->height());
 
 		m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
+		m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 
 		m_viewportCapability->setChanged(false);
 	}
@@ -224,10 +245,11 @@ void ScreenSpaceLocalReflection::onPaint()
 
     m_fbo->bind(GL_FRAMEBUFFER);
     m_fboColorAttachment->bindActive(GL_TEXTURE0);
-    m_fbo->setDrawBuffer(gl::GL_COLOR_ATTACHMENT0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	m_fboNormalAttachment->bindActive(GL_TEXTURE1);
+	m_fboDepthAttachment->bindActive(GL_TEXTURE2);
+	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_COLOR_ATTACHMENT1});
 
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_sceneProgram->use();
     m_sceneProgram->setUniform(m_transformLocation, transform);
@@ -282,9 +304,18 @@ void ScreenSpaceLocalReflection::onPaint()
 
     fbo->bind(GL_FRAMEBUFFER);
 
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//    m_quadProgram->use();
+
+//    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
+//    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
+
 //    m_quadProgram->use();
 //    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
 
+//    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
+//    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
     m_saQuad->draw();
 
 
