@@ -58,6 +58,7 @@ protected:
     globjects::ref_ptr<globjects::Program> m_sceneProgram;
     globjects::ref_ptr<globjects::Program> m_quadProgram;
     gl::GLint m_transformLocation;
+    gl::GLint m_viewportLocation;
     gl::GLint m_quadTransformLocation;
     gl::GLint m_eyeLocation;
     gl::GLint m_translateLocation;

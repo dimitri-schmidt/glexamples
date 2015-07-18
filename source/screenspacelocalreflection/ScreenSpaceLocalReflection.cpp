@@ -153,6 +153,7 @@ void ScreenSpaceLocalReflection::initPrograms()
 	m_quadProgram->use();
 
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
+    m_viewportLocation = m_quadProgram->getUniformLocation("viewport");
 
     m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
@@ -372,6 +373,7 @@ void ScreenSpaceLocalReflection::onPaint()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     drawScene(eye, transform);
+//    drawScene(m_cameraCapability->center(), transform);
 
     m_fbo->unbind();
 
@@ -392,6 +394,7 @@ void ScreenSpaceLocalReflection::onPaint()
 //    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
 //    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
+    m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);
