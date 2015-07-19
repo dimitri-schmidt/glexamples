@@ -24,6 +24,8 @@ void main()
     vec3 view = normalize(position - eye);
     vec3 normal = normalize(texture(normalTexture, v_uv).xyz);
 
+    // fragColor = vec4(view, 1.0);
+
     
     vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
     vec3 reflection = reflection4.xyz / reflection4.w;
@@ -60,6 +62,5 @@ void main()
         fragColor = texture(fboTexture, v_uv);
     }
 
-    // fragColor = vec4(reflection * 0.5 + 0.5, 1.0);
 }
 	
