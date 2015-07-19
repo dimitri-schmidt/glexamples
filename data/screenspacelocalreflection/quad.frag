@@ -30,36 +30,61 @@ void main()
     vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
     vec3 reflection = reflection4.xyz / reflection4.w;
 
-    // fragColor = vec4(reflection * 0.5 + 0.5, 1.0);
+    // fragColor = vec4(reflection, 1.0);
 
     float scale = (2.0 / viewport.x) / length(reflection.xy);
     reflection *= scale;
 
-    vec2 uv = v_uv;
-    float expDepth = texture(depthTexture, v_uv).r;
+    // vec2 uv = v_uv;
+    // float expDepth = texture(depthTexture, v_uv).r;
 
-    bool match = false;
+    // bool match = false;
 
-    while(uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0 && match == false)
+    // while(match == false && uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
+    // {
+    //     uv += reflection.xy;
+    //     expDepth += reflection.z;
+
+    //     float newDepth = texture(depthTexture, uv).r;
+
+    //     // float threshold = 0.1;
+
+    //     // if(abs(depth - newDepth) < threshold)
+    //     if(expDepth < newDepth)
+    //     {
+    //         fragColor = texture(fboTexture, uv);
+    //         // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+    //         match = true;
+    //     }
+    // }
+
+    // if(match==false){
+    //     fragColor = texture(fboTexture, v_uv);
+    // }
+
+
+    fragColor = texture(fboTexture, v_uv);
+
+
+    vec2 pixel = vec2(v_uv.x * viewport.x, v_uv.y * viewport.y);
+    float expDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
+
+    reflection.x *= viewport.x;
+    reflection.y *= viewport.y;
+
+    while(pixel.x >= 0.0 && pixel.x <= viewport.x && pixel.y >= 0.0 && pixel.y <= viewport.y)
     {
-        uv += reflection.xy;
+        pixel += reflection.xy;
         expDepth += reflection.z;
 
-        float newDepth = texture(depthTexture, uv).r;
+        float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
 
-        // float threshold = 0.1;
-
-        // if(abs(depth - newDepth) < threshold)
         if(expDepth <= newDepth)
         {
-            // fragColor = texture(fboTexture, uv);
+            // fragColor = mix(fragColor, texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
             fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-            match = true;
+            break;
         }
-    }
-
-    if(match==false){
-        fragColor = texture(fboTexture, v_uv);
     }
 
 }
