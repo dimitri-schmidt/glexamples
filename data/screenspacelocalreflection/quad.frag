@@ -3,6 +3,7 @@
 in vec2 v_uv;
 
 out vec4 fragColor;
+// out float gl_FragDepth;
 
 
 uniform mat4 transform;
@@ -24,12 +25,13 @@ void main()
     // vec3 view = normalize(position - eye);
     vec4 ssEye4 = transform * vec4(eye, 1.0);
     vec3 ssEye = ssEye4.xyz; // / ssEye4.w;
-    vec3 view = normalize(position - ssEye);
+    // vec3 view = normalize(position - ssEye);
+    vec3 view = normalize(ssEye - position);
     vec3 normal = normalize(texture(normalTexture, v_uv).xyz);
 
-    // fragColor = vec4(normal, 1.0);
+    // fragColor = vec4(position, 1.0);
 
-    // fragColor = vec4(view, 1.0);
+    fragColor = vec4(view, 1.0);
 
     
     // vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
@@ -41,12 +43,13 @@ void main()
     float scale = (2.0 / viewport.x) / length(reflection.xy);
     reflection *= scale;
 
+
+// fragColor = texture(fboTexture, v_uv);
+
     // vec2 uv = v_uv;
     // float expDepth = texture(depthTexture, v_uv).r;
 
-    // bool match = false;
-
-    // while(match == false && uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
+    // while(uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
     // {
     //     uv += reflection.xy;
     //     expDepth += reflection.z;
@@ -56,16 +59,12 @@ void main()
     //     // float threshold = 0.1;
 
     //     // if(abs(depth - newDepth) < threshold)
-    //     if(expDepth < newDepth)
+    //     if(expDepth > newDepth)
     //     {
-    //         fragColor = texture(fboTexture, uv);
+    //         fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.3);
     //         // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-    //         match = true;
+    //         break;
     //     }
-    // }
-
-    // if(match==false){
-    //     fragColor = texture(fboTexture, v_uv);
     // }
 
 
@@ -85,13 +84,15 @@ void main()
 
         float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
 
-        if(expDepth < newDepth)
+        if(expDepth >= newDepth)
         {
             fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
             // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
             break;
         }
     }
+
+    gl_FragDepth = texture(depthTexture, v_uv).r;
 
 }
 	

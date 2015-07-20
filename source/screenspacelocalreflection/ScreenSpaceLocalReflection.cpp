@@ -361,7 +361,7 @@ void ScreenSpaceLocalReflection::onPaint()
 	const auto eye = m_cameraCapability->eye();
 
 	m_grid->update(eye, transform);
-    m_grid->draw();
+//    m_grid->draw();
 
     m_fbo->bind(GL_FRAMEBUFFER);
     m_fboColorAttachment->bindActive(GL_TEXTURE0);

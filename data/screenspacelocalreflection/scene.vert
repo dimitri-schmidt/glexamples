@@ -19,8 +19,13 @@ void main()
     v_position = position.xyz / position.w;
     gl_Position = position;
 	// v_normal = vec3(vec4(a_normal, 1.0) * rotate).xyz;
-    vec4 normal = transform * (vec4(a_normal, 1.0) * rotate);
-    v_normal = normal.xyz; // / normal.w;
+
+
+    // vec4 normal = transform * (vec4(a_normal, 1.0) * rotate);
+    vec4 normal = (vec4(a_normal, 1.0) * rotate);
+    // normal = normal / normal.w;
+    normal = transform * normal;
+    v_normal = normal.xyz ;// / normal.w;
 
     v_color = vec4(a_normal * 0.5 + 0.5, 1.0);
 }
