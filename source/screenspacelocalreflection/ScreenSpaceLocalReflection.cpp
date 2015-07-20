@@ -150,6 +150,8 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
 
+	m_reflectivenessLocation = m_sceneProgram->getUniformLocation("reflectiveness");
+
 	m_quadProgram->use();
 
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
@@ -167,6 +169,9 @@ void ScreenSpaceLocalReflection::initPrograms()
 
 	m_positionAttachmentLocation = m_quadProgram->getUniformLocation("positionTexture");
 	m_quadProgram->setUniform(m_positionAttachmentLocation, 3);
+
+	m_reflectivenessAttachmentLocation = m_quadProgram->getUniformLocation("reflectivenessTexture");
+	m_quadProgram->setUniform(m_reflectivenessAttachmentLocation, 4);
 
 	m_quadProgram->release();
 
@@ -187,11 +192,15 @@ void ScreenSpaceLocalReflection::initFramebuffer()
 	m_fboPositionAttachment = Texture::createDefault(GL_TEXTURE_2D);
     m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 
+	m_fboReflectivenessAttachment = Texture::createDefault(GL_TEXTURE_2D);
+	m_fboReflectivenessAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
+
     m_fbo = make_ref<Framebuffer>();
     m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT0, m_fboColorAttachment);
 	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT1, m_fboNormalAttachment);
 	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT2, m_fboPositionAttachment);
-    m_fbo->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_fboDepthAttachment);
+	m_fbo->attachTexture(gl::GL_COLOR_ATTACHMENT3, m_fboReflectivenessAttachment);
+	m_fbo->attachTexture(gl::GL_DEPTH_ATTACHMENT, m_fboDepthAttachment);
 
     m_fbo->printStatus(true);
 }
@@ -246,6 +255,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
+	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.0f);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
@@ -318,6 +328,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
+	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.3f);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
@@ -341,6 +352,7 @@ void ScreenSpaceLocalReflection::onPaint()
 		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 		m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
         m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
+		m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 	
 		m_viewportCapability->setChanged(false);
 	}
@@ -368,7 +380,8 @@ void ScreenSpaceLocalReflection::onPaint()
 	m_fboNormalAttachment->bindActive(GL_TEXTURE1);
 	m_fboDepthAttachment->bindActive(GL_TEXTURE2);
 	m_fboPositionAttachment->bindActive(GL_TEXTURE3);
-	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_COLOR_ATTACHMENT1, gl::GL_COLOR_ATTACHMENT2});
+	m_fboReflectivenessAttachment->bindActive(GL_TEXTURE4);
+	m_fbo->setDrawBuffers({ gl::GL_COLOR_ATTACHMENT0, gl::GL_COLOR_ATTACHMENT1, gl::GL_COLOR_ATTACHMENT2, gl::GL_COLOR_ATTACHMENT3});
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

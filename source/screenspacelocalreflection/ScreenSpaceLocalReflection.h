@@ -64,6 +64,7 @@ protected:
     gl::GLint m_translateLocation;
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
+	gl::GLint m_reflectivenessLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;   
@@ -75,10 +76,12 @@ protected:
 	gl::GLint m_normalAttachmentLocation;
     gl::GLint m_depthLocation;
 	gl::GLint m_positionAttachmentLocation;
+	gl::GLint m_reflectivenessAttachmentLocation;
 
     globjects::ref_ptr<globjects::Framebuffer> m_fbo;
     globjects::ref_ptr<globjects::Texture> m_fboColorAttachment;
 	globjects::ref_ptr<globjects::Texture> m_fboNormalAttachment;
     globjects::ref_ptr<globjects::Texture> m_fboDepthAttachment;
 	globjects::ref_ptr<globjects::Texture> m_fboPositionAttachment;
+	globjects::ref_ptr<globjects::Texture> m_fboReflectivenessAttachment;
 };
