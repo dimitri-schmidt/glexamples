@@ -21,16 +21,22 @@ void main()
 	// fragColor = texture(positionTexture, v_uv);
 
     vec3 position = texture(positionTexture, v_uv).xyz;
-    vec3 view = normalize(position - eye);
+    // vec3 view = normalize(position - eye);
+    vec4 ssEye4 = transform * vec4(eye, 1.0);
+    vec3 ssEye = ssEye4.xyz; // / ssEye4.w;
+    vec3 view = normalize(position - ssEye);
     vec3 normal = normalize(texture(normalTexture, v_uv).xyz);
+
+    // fragColor = vec4(normal, 1.0);
 
     // fragColor = vec4(view, 1.0);
 
     
-    vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
-    vec3 reflection = reflection4.xyz / reflection4.w;
+    // vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
+    // vec3 reflection = reflection4.xyz / reflection4.w;
+    vec3 reflection = reflect(view, normal);
 
-    // fragColor = vec4(reflection, 1.0);
+    // fragColor = vec4(reflection * 0.5 +0.5, 1.0);
 
     float scale = (2.0 / viewport.x) / length(reflection.xy);
     reflection *= scale;
@@ -79,10 +85,10 @@ void main()
 
         float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
 
-        if(expDepth <= newDepth)
+        if(expDepth < newDepth)
         {
-            // fragColor = mix(fragColor, texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
-            fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+            fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
+            // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
             break;
         }
     }

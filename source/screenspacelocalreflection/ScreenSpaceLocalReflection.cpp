@@ -179,7 +179,7 @@ void ScreenSpaceLocalReflection::initFramebuffer()
     m_fboColorAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
 
 	m_fboNormalAttachment = Texture::createDefault(GL_TEXTURE_2D);
-	m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
+    m_fboNormalAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 
     m_fboDepthAttachment = Texture::createDefault(GL_TEXTURE_2D);
     m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
