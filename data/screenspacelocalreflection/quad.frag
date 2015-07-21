@@ -14,6 +14,7 @@ uniform sampler2D depthTexture;
 uniform sampler2D positionTexture;
 uniform sampler2D reflectivenessTexture;
 uniform vec3 eye;
+uniform float test;
 
 void main()
 {
@@ -100,5 +101,17 @@ void main()
 
     gl_FragDepth = texture(depthTexture, v_uv).r;
 
+	if(test == 0.3f)
+		fragColor = texture(reflectivenessTexture, v_uv);
+	if(test == 0.4f)
+		fragColor = texture(fboTexture, v_uv);
+	if(test == 0.5f)
+		fragColor = texture(depthTexture, v_uv);
+	if(test == 0.6f)
+		fragColor = texture(normalTexture, v_uv);
+	if(test == 0.7f)
+		fragColor = texture(positionTexture, v_uv);
+	
+	
 }
 	

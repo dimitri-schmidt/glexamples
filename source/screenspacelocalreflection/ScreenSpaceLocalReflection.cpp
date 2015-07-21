@@ -432,6 +432,8 @@ void ScreenSpaceLocalReflection::onPaint()
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_quadProgram->setUniform(m_eyeLocation, eye);
+	gl::GLint testLocation = m_quadProgram->getUniformLocation("test");
+	m_quadProgram->setUniform(testLocation, m_reflectiveness);
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);
