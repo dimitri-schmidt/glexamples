@@ -49,8 +49,8 @@ void main()
 
 
     fragColor = texture(fboTexture, v_uv);
-    
-    if( reflectiveness > 0.0)
+
+    if(reflectiveness > 0.0)
     {
         vec2 uv = v_uv;
         float expDepth = texture(depthTexture, v_uv).r;
@@ -62,12 +62,9 @@ void main()
 
             float newDepth = texture(depthTexture, uv).r;
 
-            // float threshold = 0.1;
-
-            // if(abs(depth - newDepth) < threshold)
             if(expDepth > newDepth)
             {
-                fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.3);
+                fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), reflectiveness);
                 // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
                 break;
             }
