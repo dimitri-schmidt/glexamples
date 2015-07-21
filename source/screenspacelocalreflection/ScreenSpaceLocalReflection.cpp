@@ -352,7 +352,7 @@ void ScreenSpaceLocalReflection::onPaint()
 		m_fboDepthAttachment->image2D(0, gl::GL_DEPTH_COMPONENT, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_DEPTH_COMPONENT, gl::GL_FLOAT, nullptr);
 		m_fboNormalAttachment->image2D(0, gl::GL_RGBA, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGBA, gl::GL_UNSIGNED_BYTE, nullptr);
         m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
-		m_fboPositionAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
+		m_fboReflectivenessAttachment->image2D(0, gl::GL_RGB, m_viewportCapability->width(), m_viewportCapability->height(), 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
 	
 		m_viewportCapability->setChanged(false);
 	}
