@@ -48,55 +48,60 @@ void main()
     reflection *= scale;
 
 
-// fragColor = texture(fboTexture, v_uv);
-
-    // vec2 uv = v_uv;
-    // float expDepth = texture(depthTexture, v_uv).r;
-
-    // while(uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
-    // {
-    //     uv += reflection.xy;
-    //     expDepth += reflection.z;
-
-    //     float newDepth = texture(depthTexture, uv).r;
-
-    //     // float threshold = 0.1;
-
-    //     // if(abs(depth - newDepth) < threshold)
-    //     if(expDepth > newDepth)
-    //     {
-    //         fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.3);
-    //         // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-    //         break;
-    //     }
-    // }
-
-
     fragColor = texture(fboTexture, v_uv);
+    
+    if( reflectiveness > 0.0)
+    {
+        vec2 uv = v_uv;
+        float expDepth = texture(depthTexture, v_uv).r;
+
+        while(uv.x <= 1.0 &&  uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
+        {
+            uv += reflection.xy;
+            expDepth += reflection.z;
+
+            float newDepth = texture(depthTexture, uv).r;
+
+            // float threshold = 0.1;
+
+            // if(abs(depth - newDepth) < threshold)
+            if(expDepth > newDepth)
+            {
+                fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.3);
+                // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+                break;
+            }
+        }
+    }
+
+
+ //    fragColor = texture(fboTexture, v_uv);
 	
-	if( reflectiveness > 0.0)
-	{
-		vec2 pixel = vec2(v_uv.x * viewport.x, v_uv.y * viewport.y);
-		float expDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
+	// if( reflectiveness > 0.0)
+	// {
+	// 	vec2 pixel = vec2(v_uv.x * viewport.x, v_uv.y * viewport.y);
+	// 	float expDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
 
-		reflection.x *= viewport.x;
-		reflection.y *= viewport.y;
+	// 	reflection.x *= viewport.x;
+	// 	reflection.y *= viewport.y;
 
-		while(pixel.x >= 0.0 && pixel.x <= viewport.x && pixel.y >= 0.0 && pixel.y <= viewport.y)
-		{
-			pixel += reflection.xy;
-			expDepth += reflection.z;
+	// 	while(pixel.x >= 0.0 && pixel.x <= viewport.x && pixel.y >= 0.0 && pixel.y <= viewport.y)
+	// 	{
+	// 		pixel += reflection.xy;
+	// 		expDepth += reflection.z;
 
-			float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
+	// 		float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
 
-			if(expDepth >= newDepth)
-			{
-				fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), reflectiveness);
-				// fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-				break;
-			}
-		}
-	}
+	// 		if(expDepth >= newDepth)
+	// 		{
+	// 			fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), reflectiveness);
+	// 			// fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	// 			break;
+	// 		}
+	// 	}
+	// }
+
+
     gl_FragDepth = texture(depthTexture, v_uv).r;
 
 }
