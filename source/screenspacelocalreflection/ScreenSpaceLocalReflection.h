@@ -42,9 +42,12 @@ protected:
 	void initPrograms();
 	void initScene();
     void initFramebuffer();
+	void initProperties();
 	void renderScene();
 	void finalize();
     void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
+	float reflectiveness() const;
+	void setReflectiveness(float reflectiveness);
 
 protected:
     /* capabilities */
@@ -71,6 +74,7 @@ protected:
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_saQuad;
 
 	int m_size;
+	float m_reflectiveness;
 
     gl::GLint m_fboColorAttachmentLocation;
 	gl::GLint m_normalAttachmentLocation;

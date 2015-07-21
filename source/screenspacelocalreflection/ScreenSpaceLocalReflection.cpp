@@ -39,11 +39,12 @@ using namespace globjects;
 using widgetzeug::make_unique;
 
 ScreenSpaceLocalReflection::ScreenSpaceLocalReflection(gloperate::ResourceManager & resourceManager, const std::string & relDataPath)
-    : Painter("ScreenSpaceLocalReflections", resourceManager, relDataPath)
+	: Painter("ScreenSpaceLocalReflections", resourceManager, relDataPath)
 	, m_targetFramebufferCapability(addCapability(new gloperate::TargetFramebufferCapability()))
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
+	, m_reflectiveness(0.3)
 {
 }
 
@@ -205,6 +206,27 @@ void ScreenSpaceLocalReflection::initFramebuffer()
     m_fbo->printStatus(true);
 }
 
+void ScreenSpaceLocalReflection::initProperties()
+{
+	addProperty<float>("reflectiveness", this,
+		&ScreenSpaceLocalReflection::reflectiveness, &ScreenSpaceLocalReflection::setReflectiveness)->setOptions({
+			{ "minimum", 0.0f },
+			{ "maximum", 1.0f },
+			{ "step", 0.05f },
+			{ "precision", 2u }
+	});
+}
+
+float ScreenSpaceLocalReflection::reflectiveness() const
+{
+	return m_reflectiveness;
+}
+
+void ScreenSpaceLocalReflection::setReflectiveness(float reflectiveness)
+{
+	m_reflectiveness = reflectiveness;
+}
+
 void ScreenSpaceLocalReflection::onInitialize()
 {
 	globjects::init();
@@ -219,6 +241,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 	m_grid = new gloperate::AdaptiveGrid{};
 	m_grid->setColor({ 0.6f, 0.6f, 0.6f });
 
+	initProperties();
     initPrograms();
 	initFramebuffer();
     initScene();
@@ -328,7 +351,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
-	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.3f);
+	m_sceneProgram->setUniform(m_reflectivenessLocation, m_reflectiveness);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
