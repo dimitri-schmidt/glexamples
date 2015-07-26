@@ -5,7 +5,8 @@ in vec2 v_uv;
 out vec4 fragColor;
 // out float gl_FragDepth;
 
-
+uniform mat4 view;
+uniform mat4 projection;
 uniform mat4 transform;
 uniform vec2 viewport;
 uniform sampler2D fboTexture;
@@ -31,10 +32,10 @@ void main()
 		vec3 position = texture(positionTexture, v_uv).xyz;
 		
 		// vec3 view = normalize(position - eye);
-		vec4 ssEye4 = transform * vec4(eye, 1.0);
+		vec4 ssEye4 = view * vec4(eye, 1.0);
 		vec3 ssEye = ssEye4.xyz; // / ssEye4.w;
 		// vec3 view = normalize(position - ssEye);
-		vec3 view = normalize(ssEye - position);
+		vec3 view = normalize(position-ssEye);
 		vec3 normal = normalize(texture(normalTexture, v_uv).xyz);
 
 		// fragColor = vec4(position, 1.0);
@@ -45,6 +46,7 @@ void main()
 		// vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
 		// vec3 reflection = reflection4.xyz / reflection4.w;
 		vec3 reflection = reflect(view, normal);
+		reflection = vec3(projection * vec4	(reflection, 1.0));
 
 		// fragColor = vec4(reflection * 0.5 +0.5, 1.0);
 

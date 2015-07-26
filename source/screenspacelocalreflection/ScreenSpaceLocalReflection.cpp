@@ -152,10 +152,14 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
 
 	m_reflectivenessLocation = m_sceneProgram->getUniformLocation("reflectiveness");
+	m_viewLocation = m_sceneProgram->getUniformLocation("view");
+	m_projectionLocation = m_sceneProgram->getUniformLocation("projection");
 
 	m_quadProgram->use();
 
+	m_quadProjctionLocation = m_quadProgram->getUniformLocation("projection");
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
+	m_quadViewLocation = m_quadProgram->getUniformLocation("view");
     m_viewportLocation = m_quadProgram->getUniformLocation("viewport");
     m_eyeLocation = m_quadProgram->getUniformLocation("eye");
 
@@ -255,8 +259,8 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
 {
     m_sceneProgram->use();
     m_sceneProgram->setUniform(m_transformLocation, transform);
-
-
+	m_sceneProgram->setUniform(m_viewLocation, m_cameraCapability->view());
+	m_sceneProgram->setUniform(m_projectionLocation, m_projectionCapability->projection());
 
 
 
@@ -432,6 +436,8 @@ void ScreenSpaceLocalReflection::onPaint()
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_quadProgram->setUniform(m_eyeLocation, eye);
+	m_quadProgram->setUniform(m_quadProjctionLocation, m_projectionCapability->projection());
+	m_quadProgram->setUniform(m_quadViewLocation, m_cameraCapability->view());
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);

@@ -68,6 +68,10 @@ protected:
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
 	gl::GLint m_reflectivenessLocation;
+	gl::GLint m_viewLocation;
+	gl::GLint m_projectionLocation;
+	gl::GLint m_quadProjctionLocation;
+	gl::GLint m_quadViewLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;   
