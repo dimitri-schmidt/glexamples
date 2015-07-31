@@ -44,7 +44,7 @@ ScreenSpaceLocalReflection::ScreenSpaceLocalReflection(gloperate::ResourceManage
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
-	, m_reflectiveness(0.3)
+    , m_reflectiveness(0.3)
 {
 }
 
@@ -65,18 +65,18 @@ void ScreenSpaceLocalReflection::initScene()
 {
     m_vertices = new Buffer;
     m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
-        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,	// front
-         1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,	// front
+         1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
          1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,	// right
          1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
          1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
          1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
-         1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,	// back
-        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,	// back
+        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
         -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,	// left
         -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
         -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
@@ -278,7 +278,8 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
-	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.0f);
+//	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.0f);
+    m_sceneProgram->setUniform(m_reflectivenessLocation, m_reflectiveness);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
@@ -351,7 +352,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
-	m_sceneProgram->setUniform(m_reflectivenessLocation, m_reflectiveness);
+
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
