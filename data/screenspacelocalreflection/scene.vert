@@ -8,6 +8,8 @@ out vec3 v_normal;
 out vec3 v_position;
 out vec4 v_color;
 
+uniform mat4 view;
+uniform mat4 projection;
 uniform mat4 transform;
 uniform mat4 translate;
 uniform mat4 rotate;
