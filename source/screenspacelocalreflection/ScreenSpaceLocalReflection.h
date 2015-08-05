@@ -47,7 +47,7 @@ protected:
 	void finalize();
     void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
 	float reflectiveness() const;
-	void setReflectiveness(float treshold);
+	void setReflectiveness(float reflectiveness);
 	float treshold() const;
 	void setTreshold(float treshold);
 
