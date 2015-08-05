@@ -4,6 +4,7 @@ in vec2 v_uv;
 
 out vec4 fragColor;
 
+uniform float treshold
 uniform mat4 transform;
 uniform vec2 viewport;
 uniform sampler2D fboTexture;
@@ -55,8 +56,8 @@ void main()
    //          float diff = expDepth - newDepth;
 
    //          // if(expDepth < newDepth) //> 0.0 && expDepth - newDepth < 0.002)
-   //          // if(diff > 0.0 && diff < 0.002)
-   //          if (newDepth < expDepth)
+   //           if(diff > 0.0 && diff < treshold)
+   //          //if (newDepth < expDepth)
    //          {
    //              // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
    //              fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texture(fboTexture, uv), 0.7);

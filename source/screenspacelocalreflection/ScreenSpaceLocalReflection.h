@@ -47,7 +47,9 @@ protected:
 	void finalize();
     void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
 	float reflectiveness() const;
-	void setReflectiveness(float reflectiveness);
+	void setReflectiveness(float treshold);
+	float treshold() const;
+	void setTreshold(float treshold);
 
 protected:
     /* capabilities */
@@ -68,6 +70,7 @@ protected:
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
 	gl::GLint m_reflectivenessLocation;
+	gl::GLint m_tresholdLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;   
@@ -75,6 +78,7 @@ protected:
 
 	int m_size;
 	float m_reflectiveness;
+	float m_treshold;
 
     gl::GLint m_fboColorAttachmentLocation;
 	gl::GLint m_normalAttachmentLocation;

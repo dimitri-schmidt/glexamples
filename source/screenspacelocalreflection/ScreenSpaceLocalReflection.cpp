@@ -44,7 +44,8 @@ ScreenSpaceLocalReflection::ScreenSpaceLocalReflection(gloperate::ResourceManage
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
-    , m_reflectiveness(0.3)
+	, m_reflectiveness(0.3)
+	, m_treshold(0.002)
 {
 }
 
@@ -158,6 +159,7 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
     m_viewportLocation = m_quadProgram->getUniformLocation("viewport");
     m_eyeLocation = m_quadProgram->getUniformLocation("eye");
+	m_tresholdLocation = m_quadProgram->getUniformLocation("treshold");
 
     m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
@@ -215,6 +217,14 @@ void ScreenSpaceLocalReflection::initProperties()
 			{ "step", 0.05f },
 			{ "precision", 2u }
 	});
+
+	addProperty<float>("treshold", this,
+		&ScreenSpaceLocalReflection::treshold, &ScreenSpaceLocalReflection::setTreshold)->setOptions({
+			{ "minimum", 0.0f },
+			{ "maximum", 0.01f },
+			{ "step", 0.001f },
+			{ "precision", 3u }
+	});
 }
 
 float ScreenSpaceLocalReflection::reflectiveness() const
@@ -225,6 +235,16 @@ float ScreenSpaceLocalReflection::reflectiveness() const
 void ScreenSpaceLocalReflection::setReflectiveness(float reflectiveness)
 {
 	m_reflectiveness = reflectiveness;
+}
+
+float ScreenSpaceLocalReflection::treshold() const
+{
+	return m_treshold;
+}
+
+void ScreenSpaceLocalReflection::setTreshold(float treshold)
+{
+	m_treshold = treshold;
 }
 
 void ScreenSpaceLocalReflection::onInitialize()
@@ -433,6 +453,7 @@ void ScreenSpaceLocalReflection::onPaint()
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_quadProgram->setUniform(m_eyeLocation, eye);
+	m_quadProgram->setUniform(m_tresholdLocation, m_treshold);
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);
