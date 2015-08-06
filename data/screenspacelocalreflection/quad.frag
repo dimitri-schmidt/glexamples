@@ -66,7 +66,7 @@ void main()
              }
 			 uv += reflection.xy;
             expDepth += reflection.z;
-   //      }
+        }
     }
 
     gl_FragDepth = texture(depthTexture, v_uv).r;
