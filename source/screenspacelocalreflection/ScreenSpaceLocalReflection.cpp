@@ -66,18 +66,18 @@ void ScreenSpaceLocalReflection::initScene()
 {
     m_vertices = new Buffer;
     m_vertices->setData(std::vector < float > {		// position.x, position.y, position.z, normal.x, normal.y, normal.z
-        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,	// front
-         1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,	// front
+         1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
          1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,	// right
          1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
          1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
          1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f,
-         1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,	// back
-        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,  0.0f,  0.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,	// back
+        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
         -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f,	// left
         -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
         -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f,
