@@ -17,17 +17,14 @@ uniform mat4 scale;
 
 void main()
 {
-    vec4 position = transform * (vec4(a_vertex, 1.0) * scale * rotate * translate);
-    // vec4 position = (vec4(a_vertex, 1.0) * scale * rotate * translate);
+	mat4 model = translate * rotate * scale;
+	mat4 mvp = projection * view * model;
+    vec4 position = mvp * vec4(a_vertex, 1.0);
     v_position = position.xyz / position.w;
     gl_Position = position;
-    // gl_Position = transform * position;
+	
 	// v_normal = vec3(vec4(a_normal, 1.0) * rotate).xyz;
-
-
     // vec4 normal = transform * (vec4(a_normal, 1.0) * rotate);
-    
-
     // vec4 normal = (vec4(a_normal, 1.0) * rotate);    //right left have both red in it, dafuq??
     vec4 normal = (rotate * vec4(a_normal, 1.0));
 

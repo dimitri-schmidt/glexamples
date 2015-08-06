@@ -279,23 +279,9 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
 	m_sceneProgram->setUniform(m_viewLocation, m_cameraCapability->view());
 	m_sceneProgram->setUniform(m_projectionLocation, m_projectionCapability->projection());
 
-
-
-
-    auto scale = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
-                           0.0f, 0.5f, 0.0f, 0.0f,
-                           0.0f, 0.0f, 0.5f, 0.0f,
-                           0.0f, 0.0f, 0.0f, 1.0f);
-
-    auto rotate = glm::mat4(cos(-M_PI/4), 0.0f, -sin(-M_PI/4),  0.0f,
-                            0.0f,		  1.0f,  0.0f,		    0.0f,
-                            sin(-M_PI/4), 0.0f,  cos(-M_PI/4),  0.0f,
-                            0.0f,		  0.0f,  0.0f,		    1.0f);
-
-    auto translate = glm::mat4(1.0f, 0.0f, 0.0f, -1.0f,
-                               0.0f, 1.0f, 0.0f,  0.0f,
-                               0.0f, 0.0f, 1.0f,  0.0f,
-                               0.0f, 0.0f, 0.0f,  1.0f);
+	auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	auto rotate = glm::rotate(glm::mat4(1.0f), (float)-M_PI_4, glm::vec3(0.0f, 1.0f, 0.0f));
+	auto translate = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
@@ -305,82 +291,36 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
-    //    m_vao->unbind();
 
-
-
-
-    rotate = glm::mat4(cos(M_PI/4), 0.0f, -sin(M_PI/4), 0.0f,
-                       0.0f,		1.0f,  0.0f,		0.0f,
-                       sin(M_PI/4), 0.0f,  cos(M_PI/4), 0.0f,
-                       0.0f,		0.0f,  0.0f,		1.0f);
-
-    translate = glm::mat4(1.0f, 0.0f, 0.0f, 1.0f,
-                          0.0f, 1.0f, 0.0f, 0.0f,
-                          0.0f, 0.0f, 1.0f, 0.0f,
-                          0.0f, 0.0f, 0.0f, 1.0f);
+	rotate = glm::rotate(glm::mat4(1.0f), (float)M_PI_4, glm::vec3(0.0f, 1.0f, 0.0f));
+	translate = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
-//    m_sceneProgram->setUniform(m_scaleLocation, scale);
 
-    //    m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
-//    m_vao->unbind();
 
-
-
-
-    scale = glm::mat4(0.05f, 0.0f, 0.0f, 0.0f,
-                           0.0f, 1.5f, 0.0f, 0.0f,
-                           0.0f, 0.0f, 1.5f, 0.0f,
-                           0.0f, 0.0f, 0.0f, 1.0f);
-
-    rotate = glm::mat4(1.0f, 0.0f, 0.0f,  0.0f,
-                            0.0f, 1.0f,  0.0f, 0.0f,
-                            0.0f, 0.0f,  1.0f,  0.0f,
-                            0.0f, 0.0f,  0.0f, 1.0f);
-
-    translate = glm::mat4(1.0f, 0.0f, 0.0f, -1.0f,
-                               0.0f, 1.0f, 0.0f,  0.0f,
-                               0.0f, 0.0f, 1.0f,  0.0f,
-                               0.0f, 0.0f, 0.0f,  1.0f);
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.05f, 1.5f, 1.5f));
+	rotate = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	translate = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
 
-//    m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
-    //    m_vao->unbind();
 
-
-
-    scale = glm::mat4(3.0f, 0.0f, 0.0f, 0.0f,
-                           0.0f, 0.01f, 0.0f, 0.0f,
-                           0.0f, 0.0f, 3.0f, 0.0f,
-                           0.0f, 0.0f, 0.0f, 1.0f);
-
-    rotate = glm::mat4(1.0f, 0.0f, 0.0f,  0.0f,
-                            0.0f, 1.0f,  0.0f, 0.0f,
-                            0.0f, 0.0f,  1.0f,  0.0f,
-                            0.0f, 0.0f,  0.0f, 1.0f);
-
-    translate = glm::mat4(1.0f, 0.0f, 0.0f, 0.0f,
-                               0.0f, 1.0f, 0.0f, -0.7f,
-                               0.0f, 0.0f, 1.0f,  0.0f,
-                               0.0f, 0.0f, 0.0f,  1.0f);
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(3.0f, 0.001f, 3.0f));
+	rotate = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.7f, 0.0f));
 
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
 
-
-    m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
+
     m_vao->unbind();
-
-
     m_sceneProgram->release();
 }
 
