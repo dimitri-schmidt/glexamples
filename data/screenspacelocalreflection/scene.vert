@@ -26,14 +26,19 @@ void main()
 	// v_normal = vec3(vec4(a_normal, 1.0) * rotate).xyz;
     // vec4 normal = transform * (vec4(a_normal, 1.0) * rotate);
     // vec4 normal = (vec4(a_normal, 1.0) * rotate);    //right left have both red in it, dafuq??
-    vec4 normal = (rotate * vec4(a_normal, 1.0));
+    // vec4 normal = (rotate * vec4(a_normal, 1.0));
+
+
+    mvp = projection * view * rotate;
+    vec4 normal = vec4(a_normal, 1.0) * inverse(mvp);
+
 
     // normal = normal / normal.w;
     // normal = transform * normal;       // changes while zooming, think it shouldn't change
-    normal = normal * transform;
+    // normal = normal * transform;
     v_normal = normal.xyz;
     // v_normal = normal.xyz / normal.w;
-    v_normal.z *= -1.0;
+    // v_normal.z *= -1.0;
 
     v_color = vec4(a_normal * 0.5 + 0.5, 1.0);
 }
