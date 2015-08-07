@@ -5,7 +5,7 @@ layout(location = 0) in vec3 a_vertex;
 layout(location = 1) in vec3 a_normal;
 
 out vec3 v_normal;
-out vec3 v_position;
+out vec4 v_position;
 out vec4 v_color;
 
 uniform mat4 view;
@@ -20,7 +20,7 @@ void main()
 	mat4 model = translate * rotate * scale;
 	mat4 mvp = projection * view * model;
     vec4 position = mvp * vec4(a_vertex, 1.0);
-    v_position = position.xyz / position.w;
+    v_position = position;
     gl_Position = position;
 	
 	// v_normal = vec3(vec4(a_normal, 1.0) * rotate).xyz;

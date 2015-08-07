@@ -1,7 +1,7 @@
 #version 330 core
 
 in vec3 v_normal;
-in vec3 v_position;
+in vec4 v_position;
 in vec4 v_color;
 
 uniform float reflectiveness;
@@ -15,6 +15,6 @@ void main()
 {
 	fragColor = v_color;
 	fragNormal = v_normal * 0.5 + 0.5;
-	fragPosition = v_position * 0.5 + 0.5;
+    fragPosition = (v_position.xyz / v_position.w) * 0.5 + 0.5;
 	fragReflectiveness = vec3(reflectiveness);
 }
