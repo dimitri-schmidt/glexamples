@@ -43,29 +43,48 @@ void main()
 		reflection *= scale;
         // reflection.z *= -1.0;
 
+        // reflection.y = (reflection.y / abs(reflection.y)) - reflection.y;
+
         vec2 uv = v_uv + reflection.xy;
         float expDepth = texture(depthTexture, v_uv).r - reflection.z;
 		float newDepth = 0.0;
 
 		
+        float oldHitDiff = 0.0;
         while(uv.x <= 1.0 && uv.x >= 0.0 && uv.y <= 1.0 && uv.y >= 0.0)
         {
             newDepth = texture(depthTexture, uv).r;
 
             float diff = expDepth - newDepth;
 
+            
+
             // if(expDepth < newDepth) //> 0.0 && expDepth - newDepth < 0.002)
             // if(diff > 0.0 && diff < treshold)
-            if(diff >= 0.1 && diff < 0.2)
+            if(diff > 0.0 )// && diff < 0.9)
             //if (newDepth < expDepth)
             {
-                 // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
-                fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texture(fboTexture, uv), 0.7);
-                 // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-                break;
+                if(texture(depthTexture, uv).r < 1.0){
+
+
+                    // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
+                    fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texture(fboTexture, uv), 0.7);
+                     // fragColor = vec4(1.0, 0.0, 1.0, 1.0);
+                    if(oldHitDiff < diff - 0.01)
+                    {
+                        // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
+                        break;
+                    } 
+                    oldHitDiff = diff; 
+
+
+                }
+
+                  
+
             }
             uv += reflection.xy;
-            expDepth -= reflection.z;
+            expDepth -=  reflection.z;
         }
     }
 

@@ -267,7 +267,8 @@ void ScreenSpaceLocalReflection::onInitialize()
 	initFramebuffer();
     initScene();
 
-	glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
+    glClearColor(0.85f, 0.85f, 0.85f, 1.0f);
+//    glClearDepth(1.0f);
 
 	setupProjection();
 }
