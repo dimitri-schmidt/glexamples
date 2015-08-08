@@ -46,8 +46,8 @@ ScreenSpaceLocalReflection::ScreenSpaceLocalReflection(gloperate::ResourceManage
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
 	, m_planeReflectiveness(0.6)
 	, m_objectsReflectiveness(0.3)
-	, m_selfReflectionThreshold(0.0)
-	, m_maxDepthDifference(0.0)
+    , m_selfReflectionThreshold(0.01)
+    , m_maxDepthDifference(0.1)
 {
 }
 
@@ -165,7 +165,7 @@ void ScreenSpaceLocalReflection::initPrograms()
 	m_maxDepthDifferenceLocation = m_quadProgram->getUniformLocation("maxDepthDifference");
 	m_selfReflectionThresholdLocation = m_quadProgram->getUniformLocation("selfReflectionThreshold");
 
-    m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
+    m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("colorTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
 
 	m_normalAttachmentLocation = m_quadProgram->getUniformLocation("normalTexture");

@@ -8,7 +8,7 @@ uniform float maxDepthDifference;
 uniform float selfReflectionThreshold;
 uniform mat4 transform;
 uniform vec2 viewport;
-uniform sampler2D fboTexture;
+uniform sampler2D colorTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D positionTexture;
@@ -17,124 +17,41 @@ uniform vec3 eye;
 
 void main()
 {
-  float reflectiveness = texture(reflectivenessTexture, v_uv).r;
-	
-	fragColor = texture(fboTexture, v_uv);
-
+    vec4 originalColor = texture(colorTexture, v_uv);
+    fragColor = originalColor;
+    float reflectiveness = texture(reflectivenessTexture, v_uv).r;
 	if(reflectiveness > 0.0)
 	{
-        vec3 position = texture(positionTexture, v_uv).xyz * 2.0 - 1.0; 
-
-		vec4 ssEye4 = transform * vec4(eye, 1.0);       //must be right, cauze next line
-        // vec4 ssEye4 = vec4(eye, 1.0) * transform;    //changes color while moving!!!!!!
-		
-        vec3 ssEye = ssEye4.xyz;                        //ssEye = (0,0,-156)
-        // vec3 ssEye = ssEye4.xyz / ssEye4.w;          //flackert
-
-		vec3 view = normalize(ssEye - position);        //von oberfläche zum auge
-
+        vec3 position = texture(positionTexture, v_uv).xyz * 2.0 - 1.0;
+		vec3 ssEye = (transform * vec4(eye, 1.0)).xyz;
+		vec3 view = normalize(position - ssEye);
         vec3 normal = normalize(texture(normalTexture, v_uv).xyz * 2.0 - 1.0);
+		
+        vec3 reflection = reflect(view, normal);
+        reflection.x *= viewport.x;
+        reflection.y *= viewport.y;
+        reflection = reflection / length(reflection.xy);
 
-		// vec4 reflection4 = transform * vec4(reflect(view, normal), 1.0);
-		// vec3 reflection = reflection4.xyz / reflection4.w;
-		vec3 reflection = reflect(-view, normal);         // -view, da vom eye zur oberfläche
-
-        // reflection.x *= viewport.x;
-        // reflection.y *= viewport.y;
-        // reflection = reflection / length(reflection.xy);
-
-        // reflection.x *= -1.0;
-        // reflection.z *= -1.0;
-
-        float scale = (2.0 / viewport.x) / length(reflection.xy);
-        reflection *= scale;
-
-        // reflection.x *= viewport.x;
-        // reflection.y *= viewport.y;
-
-        // reflection.z *= -1.0;
-
-        // reflection.y = (reflection.y / abs(reflection.y)) - reflection.y;
-
-
-
-        vec2 uv = v_uv + reflection.xy;
-        float expDepth = texture(depthTexture, v_uv).r - reflection.z;
-        float newDepth = 0.0;
-
-        float oldHitDiff = 0.0;
-        while(uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0)
+        vec2 pixel = vec2(v_uv.x * viewport.x, v_uv.y * viewport.y) + reflection.xy;
+        ivec2 iPixel = ivec2(pixel);
+        float expectedDepth = texelFetch(depthTexture, iPixel, 0).r - reflection.z;
+        float actualDepth = 0.0;
+        float lastMatchDiff = 0.0;
+        float diff = 0.0;
+        while(pixel.x >= 0.0 && pixel.x <= viewport.x && pixel.y >= 0.0 && pixel.y <= viewport.y)
         {
-            float newDepth = texture(depthTexture, uv).r;
-
-            float diff = expDepth - newDepth;
-
-            if(diff > 0.0 && diff < 0.1)
+            actualDepth = texelFetch(depthTexture, iPixel, 0).r;
+            diff = expectedDepth - actualDepth;
+            if(diff > 0.0 && diff < maxDepthDifference && actualDepth < 1.0)
             {
-                if(texture(depthTexture, uv).r < 1.0)
-                {
-                    // fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
-                    fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texture(fboTexture, uv), 0.7);
-
-                    if(oldHitDiff < diff - 0.01)
-                    {
-                        // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
-                        break;
-                    } 
-                    oldHitDiff = diff; 
-                }
+                fragColor = mix(originalColor, texelFetch(colorTexture, iPixel, 0), reflectiveness);
+                if(lastMatchDiff < diff - selfReflectionThreshold) break; 
+                lastMatchDiff = max(diff, lastMatchDiff); 
             }
-
-
-            uv += reflection.xy;
-            expDepth -= reflection.z;
+            pixel += reflection.xy;
+            iPixel = ivec2(pixel);
+            expectedDepth -= reflection.z;
         }
-
-
-
-
-        // vec2 pixel = vec2(v_uv.x * viewport.x, v_uv.y * viewport.y);
-        // float expDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
-        // float newDepth = 0.0;
-
-        // // reflection.x *= viewport.x;
-        // // reflection.y *= viewport.y;
-
-        // // reflection.z *= 0.5;
-
-        // pixel += reflection.xy;
-        // expDepth += reflection.z;
-
-        // float oldHitDiff = 0.0;
-        // while(pixel.x >= 0.0 && pixel.x <= viewport.x && pixel.y >= 0.0 && pixel.y <= viewport.y)
-        // {
-        //     float newDepth = texelFetch(depthTexture, ivec2(pixel), 0).r;
-
-        //     float diff = expDepth - newDepth;
-
-        //     if(diff > 0.0)
-        //     {
-        //         if(texelFetch(depthTexture, ivec2(pixel), 0).r < 1.0)
-        //         {
-        //             // fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
-        //             fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texelFetch(fboTexture, ivec2(pixel), 0), 0.7);
-        //             // if(oldHitDiff < diff - 0.01)
-        //             // {
-        //                 // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
-        //                 break;
-        //             // } 
-        //             oldHitDiff = diff; 
-        //         }
-        //     }
-
-
-        //     pixel += reflection.xy;
-        //     expDepth += reflection.z;
-        // }
-
-
     }
-
     gl_FragDepth = texture(depthTexture, v_uv).r;
-
 }
