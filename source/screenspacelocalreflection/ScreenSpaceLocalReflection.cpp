@@ -222,9 +222,9 @@ void ScreenSpaceLocalReflection::initProperties()
 	addProperty<float>("treshold", this,
 		&ScreenSpaceLocalReflection::treshold, &ScreenSpaceLocalReflection::setTreshold)->setOptions({
 			{ "minimum", 0.0f },
-			{ "maximum", 0.01f },
-			{ "step", 0.001f },
-			{ "precision", 3u }
+			{ "maximum", 1.0f },
+			{ "step", 0.0001f },
+			{ "precision", 4u }
 	});
 }
 
