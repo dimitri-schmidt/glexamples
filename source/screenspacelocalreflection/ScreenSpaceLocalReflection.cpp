@@ -44,8 +44,10 @@ ScreenSpaceLocalReflection::ScreenSpaceLocalReflection(gloperate::ResourceManage
 	, m_viewportCapability(addCapability(new gloperate::ViewportCapability()))
 	, m_projectionCapability(addCapability(new gloperate::PerspectiveProjectionCapability(m_viewportCapability)))
 	, m_cameraCapability(addCapability(new gloperate::CameraCapability()))
-	, m_reflectiveness(0.3)
-	, m_treshold(0.002)
+	, m_planeReflectiveness(0.6)
+	, m_objectsReflectiveness(0.3)
+	, m_selfReflectionThreshold(0.0)
+	, m_maxDepthDifference(0.0)
 {
 }
 
@@ -160,7 +162,8 @@ void ScreenSpaceLocalReflection::initPrograms()
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
     m_viewportLocation = m_quadProgram->getUniformLocation("viewport");
     m_eyeLocation = m_quadProgram->getUniformLocation("eye");
-	m_tresholdLocation = m_quadProgram->getUniformLocation("treshold");
+	m_maxDepthDifferenceLocation = m_quadProgram->getUniformLocation("maxDepthDifference");
+	m_selfReflectionThresholdLocation = m_quadProgram->getUniformLocation("selfReflectionThreshold");
 
     m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("fboTexture");
     m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
@@ -211,41 +214,77 @@ void ScreenSpaceLocalReflection::initFramebuffer()
 
 void ScreenSpaceLocalReflection::initProperties()
 {
-	addProperty<float>("reflectiveness", this,
-		&ScreenSpaceLocalReflection::reflectiveness, &ScreenSpaceLocalReflection::setReflectiveness)->setOptions({
+	addProperty<float>("planeReflectiveness", this,
+		&ScreenSpaceLocalReflection::planeReflectiveness, &ScreenSpaceLocalReflection::setPlaneReflectiveness)->setOptions({
 			{ "minimum", 0.0f },
 			{ "maximum", 1.0f },
 			{ "step", 0.05f },
 			{ "precision", 2u }
 	});
 
-	addProperty<float>("treshold", this,
-		&ScreenSpaceLocalReflection::treshold, &ScreenSpaceLocalReflection::setTreshold)->setOptions({
+	addProperty<float>("objectsReflectiveness", this,
+		&ScreenSpaceLocalReflection::objectsReflectiveness, &ScreenSpaceLocalReflection::setObjectsReflectiveness)->setOptions({
 			{ "minimum", 0.0f },
 			{ "maximum", 1.0f },
-			{ "step", 0.0001f },
+			{ "step", 0.05f },
+			{ "precision", 2u }
+	});
+
+	addProperty<float>("max depth difference", this,
+		&ScreenSpaceLocalReflection::maxDepthDifference, &ScreenSpaceLocalReflection::setMaxDepthDifference)->setOptions({
+			{ "minimum", 0.0f },
+			{ "maximum", 1.0f },
+			{ "step", 0.01f },
+			{ "precision", 2u }
+	});
+
+	addProperty<float>("self reflection threshold", this,
+		&ScreenSpaceLocalReflection::selfReflectionThreshold, &ScreenSpaceLocalReflection::setSelfReflectionThreshold)->setOptions({
+			{ "minimum", 0.0f },
+			{ "maximum", 1.0f },
+			{ "step", 0.0005f },
 			{ "precision", 4u }
 	});
 }
 
-float ScreenSpaceLocalReflection::reflectiveness() const
+float ScreenSpaceLocalReflection::planeReflectiveness() const
 {
-	return m_reflectiveness;
+	return m_planeReflectiveness;
 }
 
-void ScreenSpaceLocalReflection::setReflectiveness(float reflectiveness)
+void ScreenSpaceLocalReflection::setPlaneReflectiveness(float reflectiveness)
 {
-	m_reflectiveness = reflectiveness;
+	m_planeReflectiveness = reflectiveness;
 }
 
-float ScreenSpaceLocalReflection::treshold() const
+float ScreenSpaceLocalReflection::objectsReflectiveness() const
 {
-	return m_treshold;
+	return m_objectsReflectiveness;
 }
 
-void ScreenSpaceLocalReflection::setTreshold(float treshold)
+void ScreenSpaceLocalReflection::setObjectsReflectiveness(float reflectiveness)
 {
-	m_treshold = treshold;
+	m_objectsReflectiveness = reflectiveness;
+}
+
+float ScreenSpaceLocalReflection::maxDepthDifference() const
+{
+	return m_maxDepthDifference;
+}
+
+void ScreenSpaceLocalReflection::setMaxDepthDifference(float difference)
+{
+	m_maxDepthDifference = difference;
+}
+
+float ScreenSpaceLocalReflection::selfReflectionThreshold() const
+{
+	return m_selfReflectionThreshold;
+}
+
+void ScreenSpaceLocalReflection::setSelfReflectionThreshold(float threshold)
+{
+	m_selfReflectionThreshold = threshold;
 }
 
 void ScreenSpaceLocalReflection::onInitialize()
@@ -288,7 +327,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
 //	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.0f);
-    m_sceneProgram->setUniform(m_reflectivenessLocation, m_reflectiveness);
+    m_sceneProgram->setUniform(m_reflectivenessLocation, m_objectsReflectiveness);
 
     m_vao->bind();
     m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT);
@@ -315,6 +354,7 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
 	rotate = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.7f, 0.0f));
 
+	m_sceneProgram->setUniform(m_reflectivenessLocation, m_planeReflectiveness);
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
@@ -396,7 +436,8 @@ void ScreenSpaceLocalReflection::onPaint()
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_quadProgram->setUniform(m_eyeLocation, eye);
-	m_quadProgram->setUniform(m_tresholdLocation, m_treshold);
+	m_quadProgram->setUniform(m_maxDepthDifferenceLocation, m_maxDepthDifference);
+	m_quadProgram->setUniform(m_selfReflectionThresholdLocation, m_selfReflectionThreshold);
     m_saQuad->draw();
 
 	Framebuffer::unbind(GL_FRAMEBUFFER);

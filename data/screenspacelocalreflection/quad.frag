@@ -4,7 +4,8 @@ in vec2 v_uv;
 
 out vec4 fragColor;
 
-uniform float treshold;
+uniform float maxDepthDifference;
+uniform float selfReflectionThreshold;
 uniform mat4 transform;
 uniform vec2 viewport;
 uniform sampler2D fboTexture;
