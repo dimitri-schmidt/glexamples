@@ -42,9 +42,14 @@ protected:
 	void initPrograms();
 	void initScene();
     void initFramebuffer();
+	void initProperties();
 	void renderScene();
 	void finalize();
-    void drawScene(glm::tmat4x4<float, glm::highp> transform);
+    void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
+	float reflectiveness() const;
+	void setReflectiveness(float reflectiveness);
+	float treshold() const;
+	void setTreshold(float treshold);
 
 protected:
     /* capabilities */
@@ -58,24 +63,35 @@ protected:
     globjects::ref_ptr<globjects::Program> m_sceneProgram;
     globjects::ref_ptr<globjects::Program> m_quadProgram;
     gl::GLint m_transformLocation;
+	gl::GLint m_viewLocation;
+	gl::GLint m_projectionLocation;
+    gl::GLint m_viewportLocation;
+    gl::GLint m_quadTransformLocation;
+    gl::GLint m_eyeLocation;
     gl::GLint m_translateLocation;
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
+	gl::GLint m_reflectivenessLocation;
+	gl::GLint m_tresholdLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;   
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_saQuad;
 
 	int m_size;
+	float m_reflectiveness;
+	float m_treshold;
 
     gl::GLint m_fboColorAttachmentLocation;
 	gl::GLint m_normalAttachmentLocation;
     gl::GLint m_depthLocation;
 	gl::GLint m_positionAttachmentLocation;
+	gl::GLint m_reflectivenessAttachmentLocation;
 
     globjects::ref_ptr<globjects::Framebuffer> m_fbo;
     globjects::ref_ptr<globjects::Texture> m_fboColorAttachment;
 	globjects::ref_ptr<globjects::Texture> m_fboNormalAttachment;
     globjects::ref_ptr<globjects::Texture> m_fboDepthAttachment;
 	globjects::ref_ptr<globjects::Texture> m_fboPositionAttachment;
+	globjects::ref_ptr<globjects::Texture> m_fboReflectivenessAttachment;
 };
