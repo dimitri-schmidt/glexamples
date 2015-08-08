@@ -46,10 +46,14 @@ protected:
 	void renderScene();
 	void finalize();
     void drawScene(const glm::vec3 & eye, const glm::mat4 & transform);
-	float reflectiveness() const;
-	void setReflectiveness(float reflectiveness);
-	float treshold() const;
-	void setTreshold(float treshold);
+	float planeReflectiveness() const;
+	void setPlaneReflectiveness(float reflectiveness);
+	float objectsReflectiveness() const;
+	void setObjectsReflectiveness(float reflectiveness);
+	float maxDepthDifference() const;
+	void setMaxDepthDifference(float difference);
+	float selfReflectionThreshold() const;
+	void setSelfReflectionThreshold(float threshold);
 
 protected:
     /* capabilities */
@@ -72,15 +76,18 @@ protected:
 	gl::GLint m_rotateLocation;
     gl::GLint m_scaleLocation;
 	gl::GLint m_reflectivenessLocation;
-	gl::GLint m_tresholdLocation;
+	gl::GLint m_maxDepthDifferenceLocation;
+	gl::GLint m_selfReflectionThresholdLocation;
 	globjects::ref_ptr<globjects::Buffer> m_vertices;
 	globjects::ref_ptr<globjects::Buffer> m_indices;
 	globjects::ref_ptr<globjects::VertexArray> m_vao;   
 	globjects::ref_ptr<gloperate::ScreenAlignedQuad> m_saQuad;
 
 	int m_size;
-	float m_reflectiveness;
-	float m_treshold;
+	float m_planeReflectiveness;
+	float m_objectsReflectiveness;
+	float m_maxDepthDifference;
+	float m_selfReflectionThreshold;
 
     gl::GLint m_fboColorAttachmentLocation;
 	gl::GLint m_normalAttachmentLocation;

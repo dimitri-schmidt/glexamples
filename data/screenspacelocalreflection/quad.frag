@@ -4,7 +4,8 @@ in vec2 v_uv;
 
 out vec4 fragColor;
 
-uniform float treshold;
+uniform float maxDepthDifference;
+uniform float selfReflectionThreshold;
 uniform mat4 transform;
 uniform vec2 viewport;
 uniform sampler2D fboTexture;
@@ -74,6 +75,7 @@ void main()
                 {
                     // fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 0.3);
                     fragColor = mix(vec4(1.0, 1.0, 1.0, 1.0), texture(fboTexture, uv), 0.7);
+
                     if(oldHitDiff < diff - 0.01)
                     {
                         // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
