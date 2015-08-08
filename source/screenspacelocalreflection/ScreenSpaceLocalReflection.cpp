@@ -238,7 +238,7 @@ void ScreenSpaceLocalReflection::initProperties()
 			{ "precision", 2u }
 	});
 
-	addProperty<float>("self reflection threshold", this,
+    addProperty<float>("self-reflection threshold", this,
 		&ScreenSpaceLocalReflection::selfReflectionThreshold, &ScreenSpaceLocalReflection::setSelfReflectionThreshold)->setOptions({
 			{ "minimum", 0.0f },
 			{ "maximum", 1.0f },
