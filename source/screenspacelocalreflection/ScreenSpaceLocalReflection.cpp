@@ -149,8 +149,7 @@ void ScreenSpaceLocalReflection::initPrograms()
         );
 
     m_transformLocation = m_sceneProgram->getUniformLocation("transform");
-	m_viewLocation = m_sceneProgram->getUniformLocation("view");
-	m_projectionLocation = m_sceneProgram->getUniformLocation("projection");
+
     m_translateLocation = m_sceneProgram->getUniformLocation("translate");
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
@@ -316,8 +315,6 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
 {
     m_sceneProgram->use();
     m_sceneProgram->setUniform(m_transformLocation, transform);
-	m_sceneProgram->setUniform(m_viewLocation, m_cameraCapability->view());
-	m_sceneProgram->setUniform(m_projectionLocation, m_projectionCapability->projection());
 
 	auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	auto rotate = glm::rotate(glm::mat4(1.0f), (float)-M_PI_4, glm::vec3(0.0f, 1.0f, 0.0f));

@@ -14,7 +14,7 @@ layout (location=3) out vec3 fragReflectiveness;
 void main()
 {
 	fragColor = v_color;
-	fragNormal = v_normal * 0.5 + 0.5;
-    fragPosition = (v_position.xyz / v_position.w) * 0.5 + 0.5;
+	fragNormal = (v_normal + 1.0) * 0.5;
+    fragPosition = (v_position.xyz / v_position.w + 1.0) * 0.5;
 	fragReflectiveness = vec3(reflectiveness);
 }
