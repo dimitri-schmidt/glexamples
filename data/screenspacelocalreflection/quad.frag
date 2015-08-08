@@ -68,7 +68,7 @@ void main()
             {
                 if(texelFetch(depthTexture, ivec2(pixel), 0).r < 1.0)
                 {
-                    fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), 1.0);
+                    fragColor = mix(texture(fboTexture, v_uv), texelFetch(fboTexture, ivec2(pixel), 0), reflectiveness);
                     if(oldHitDiff < diff - 0.01)
                     {
                         // fragColor = mix(texture(fboTexture, v_uv), texture(fboTexture, uv), 0.9);
