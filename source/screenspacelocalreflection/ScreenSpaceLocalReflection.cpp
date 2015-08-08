@@ -149,14 +149,10 @@ void ScreenSpaceLocalReflection::initPrograms()
         );
 
     m_transformLocation = m_sceneProgram->getUniformLocation("transform");
-
     m_translateLocation = m_sceneProgram->getUniformLocation("translate");
     m_rotateLocation = m_sceneProgram->getUniformLocation("rotate");
     m_scaleLocation = m_sceneProgram->getUniformLocation("scale");
-
 	m_reflectivenessLocation = m_sceneProgram->getUniformLocation("reflectiveness");
-
-	m_quadProgram->use();
 
     m_quadTransformLocation = m_quadProgram->getUniformLocation("transform");
     m_viewportLocation = m_quadProgram->getUniformLocation("viewport");
@@ -164,22 +160,20 @@ void ScreenSpaceLocalReflection::initPrograms()
 	m_maxDepthDifferenceLocation = m_quadProgram->getUniformLocation("maxDepthDifference");
 	m_selfReflectionThresholdLocation = m_quadProgram->getUniformLocation("selfReflectionThreshold");
 
-    m_fboColorAttachmentLocation = m_quadProgram->getUniformLocation("colorTexture");
-    m_quadProgram->setUniform(m_fboColorAttachmentLocation, 0);
+    m_colorAttachmentLocation = m_quadProgram->getUniformLocation("colorTexture");
+    m_quadProgram->setUniform(m_colorAttachmentLocation, 0);
 
 	m_normalAttachmentLocation = m_quadProgram->getUniformLocation("normalTexture");
 	m_quadProgram->setUniform(m_normalAttachmentLocation, 1);
 
-    m_depthLocation = m_quadProgram->getUniformLocation("depthTexture");
-    m_quadProgram->setUniform(m_depthLocation, 2);
+    m_depthAttachmentLocation = m_quadProgram->getUniformLocation("depthTexture");
+    m_quadProgram->setUniform(m_depthAttachmentLocation, 2);
 
 	m_positionAttachmentLocation = m_quadProgram->getUniformLocation("positionTexture");
 	m_quadProgram->setUniform(m_positionAttachmentLocation, 3);
 
 	m_reflectivenessAttachmentLocation = m_quadProgram->getUniformLocation("reflectivenessTexture");
 	m_quadProgram->setUniform(m_reflectivenessAttachmentLocation, 4);
-
-	m_quadProgram->release();
 
 	m_saQuad = make_ref<gloperate::ScreenAlignedQuad>(m_quadProgram);
 }
@@ -213,7 +207,7 @@ void ScreenSpaceLocalReflection::initFramebuffer()
 
 void ScreenSpaceLocalReflection::initProperties()
 {
-	addProperty<float>("planeReflectiveness", this,
+    addProperty<float>("plane reflectiveness", this,
 		&ScreenSpaceLocalReflection::planeReflectiveness, &ScreenSpaceLocalReflection::setPlaneReflectiveness)->setOptions({
 			{ "minimum", 0.0f },
 			{ "maximum", 1.0f },
@@ -221,7 +215,7 @@ void ScreenSpaceLocalReflection::initProperties()
 			{ "precision", 2u }
 	});
 
-	addProperty<float>("objectsReflectiveness", this,
+    addProperty<float>("objects reflectiveness", this,
 		&ScreenSpaceLocalReflection::objectsReflectiveness, &ScreenSpaceLocalReflection::setObjectsReflectiveness)->setOptions({
 			{ "minimum", 0.0f },
 			{ "maximum", 1.0f },
@@ -305,8 +299,7 @@ void ScreenSpaceLocalReflection::onInitialize()
 	initFramebuffer();
     initScene();
 
-    glClearColor(0.85f, 0.85f, 0.85f, 1.0f);
-//    glClearDepth(1.0f);
+    glClearColor(0.85f, 0.87f, 0.91f, 1.0f);
 
 	setupProjection();
 }
@@ -323,7 +316,6 @@ void ScreenSpaceLocalReflection::drawScene(const glm::vec3 & eye, const glm::mat
     m_sceneProgram->setUniform(m_translateLocation, translate);
     m_sceneProgram->setUniform(m_rotateLocation, rotate);
     m_sceneProgram->setUniform(m_scaleLocation, scale);
-//	m_sceneProgram->setUniform(m_reflectivenessLocation, 0.0f);
     m_sceneProgram->setUniform(m_reflectivenessLocation, m_objectsReflectiveness);
 
     m_vao->bind();
@@ -397,7 +389,7 @@ void ScreenSpaceLocalReflection::onPaint()
 	const auto eye = m_cameraCapability->eye();
 
 	m_grid->update(eye, transform);
-//    m_grid->draw();
+    m_grid->draw();
 
     m_fbo->bind(GL_FRAMEBUFFER);
     m_fboColorAttachment->bindActive(GL_TEXTURE0);
@@ -410,26 +402,12 @@ void ScreenSpaceLocalReflection::onPaint()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     drawScene(eye, transform);
-//    drawScene(m_cameraCapability->center(), transform);
 
     m_fbo->unbind();
 
 
-
     fbo->bind(GL_FRAMEBUFFER);
 
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    m_quadProgram->use();
-
-//    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
-//    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
-
-//    m_quadProgram->use();
-//    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
-
-//    m_quadProgram->setUniform(m_fboColorAttachmentLocation, m_fboColorAttachment);
-//    m_quadProgram->setUniform(m_depthLocation, m_fboDepthAttachment);
     m_quadProgram->setUniform(m_quadTransformLocation, transform);
     m_quadProgram->setUniform(m_viewportLocation, glm::vec2(m_viewportCapability->width(), m_viewportCapability->height()));
     m_quadProgram->setUniform(m_eyeLocation, eye);

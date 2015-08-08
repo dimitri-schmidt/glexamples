@@ -87,9 +87,9 @@ protected:
 	float m_maxDepthDifference;
 	float m_selfReflectionThreshold;
 
-    gl::GLint m_fboColorAttachmentLocation;
+    gl::GLint m_colorAttachmentLocation;
 	gl::GLint m_normalAttachmentLocation;
-    gl::GLint m_depthLocation;
+    gl::GLint m_depthAttachmentLocation;
 	gl::GLint m_positionAttachmentLocation;
 	gl::GLint m_reflectivenessAttachmentLocation;
 
